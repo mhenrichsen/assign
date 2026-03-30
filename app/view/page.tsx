@@ -1,12 +1,10 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState } from "react"
 import { RaidProvider, useRaid } from "@/lib/raid-context"
-import { ALL_ENCOUNTERS } from "@/lib/encounters"
-import { decodeSession } from "@/lib/url-codec"
 import { EncounterWorkspace } from "@/components/encounter/encounter-workspace"
 import type { EncounterDef } from "@/lib/types"
-import { useUrlHash } from "@/hooks/use-url-hash"
+import { useInitialEncounters } from "@/hooks/use-initial-encounters"
 import Link from "next/link"
 import { Swords, Eye } from "lucide-react"
 
@@ -54,21 +52,6 @@ function ViewContent({ encounters }: { encounters: EncounterDef[] }) {
       </div>
     </div>
   )
-}
-
-function useInitialEncounters() {
-  const [hash] = useUrlHash()
-
-  return useMemo(() => {
-    if (!hash) return null
-
-    const session = decodeSession(hash)
-    if (!session) return null
-
-    const encounterIds = Object.keys(session.encounters)
-    const matched = ALL_ENCOUNTERS.filter((e) => encounterIds.includes(e.id))
-    return matched.length > 0 ? matched : ALL_ENCOUNTERS
-  }, [hash])
 }
 
 export default function ViewPage() {

@@ -11,12 +11,10 @@ import { X } from "lucide-react"
 export function PlayerCard({
   player,
   assignedCount = 0,
-  isDragOverlay,
   onRemove,
 }: {
   player: Player
   assignedCount?: number
-  isDragOverlay?: boolean
   onRemove?: () => void
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -33,15 +31,14 @@ export function PlayerCard({
 
   return (
     <div
-      ref={isDragOverlay ? undefined : setNodeRef}
+      ref={setNodeRef}
       style={style}
-      {...(isDragOverlay ? {} : { ...attributes, ...listeners })}
+      {...attributes}
+      {...listeners}
       className={cn(
         "group flex cursor-grab items-center gap-2 rounded border px-2.5 py-1.5 text-sm select-none transition-all",
         "border-[#3e3830] bg-[#1c1a16] hover:border-[#7a6a4a] hover:bg-[#262420]",
-        isDragging && "opacity-40",
-        isDragOverlay &&
-          "cursor-grabbing shadow-lg shadow-black/50 border-wow-gold/50 bg-[#262420]"
+        isDragging && "opacity-40"
       )}
     >
       <ClassIcon wowClass={player.class} size={16} />

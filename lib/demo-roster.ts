@@ -48,7 +48,7 @@ export const DEMO_ROSTER: Player[] = [
 
 // Pre-filled assignments for the demo
 export const DEMO_ASSIGNMENTS: Record<string, Record<string, string[]>> = {
-  general: {}, // Auto-filled by prefillGeneralAssignments based on roster
+  general: {}, // Auto-filled by computePrefills based on roster
   maulgar: {
     "maulgar-mt": ["demo-01"], // Thunderclap tanks Maulgar
     "maulgar-ot": ["demo-03"], // Ironbark offtanks

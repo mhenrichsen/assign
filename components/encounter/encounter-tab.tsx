@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import type { EncounterDef } from "@/lib/types"
 import { SlotGroup } from "./slot-group"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { BOSS_META } from "@/lib/encounter-meta"
 import { useRaid } from "@/lib/raid-context"
-import { resolveEncounter, computePrefills } from "@/lib/encounters/resolver"
+import { resolveEncounter } from "@/lib/encounters/resolver"
 
 export function EncounterTab({
   encounter,
@@ -15,7 +15,7 @@ export function EncounterTab({
   encounter: EncounterDef
   readOnly?: boolean
 }) {
-  const { session, dispatch } = useRaid()
+  const { session } = useRaid()
   const meta = BOSS_META[encounter.id]
 
   // Resolve encounter: inject dynamic slots based on roster
@@ -23,26 +23,6 @@ export function EncounterTab({
     () => resolveEncounter(encounter, session.roster),
     [encounter, session.roster]
   )
-
-  // Auto-prefill empty slots based on roster composition
-  useEffect(() => {
-    if (session.roster.length === 0) return
-
-    const existing = session.encounters[encounter.id] ?? {}
-    const prefills = computePrefills(encounter, session.roster)
-
-    for (const [slotId, playerIds] of Object.entries(prefills)) {
-      if (existing[slotId] && existing[slotId].length > 0) continue
-      for (const playerId of playerIds) {
-        dispatch({
-          type: "ASSIGN_PLAYER",
-          encounterId: encounter.id,
-          slotId,
-          playerId,
-        })
-      }
-    }
-  }, [encounter, session.roster, session.encounters, dispatch])
 
   // Group slots by their group field
   const groups = useMemo(() => {

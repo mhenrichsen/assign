@@ -13,7 +13,7 @@ export function SlotGroup({
   readOnly?: boolean
 }) {
   return (
-    <div className="wow-card rounded-lg overflow-hidden">
+    <div className="wow-card rounded-lg">
       <div className="wow-group-header px-2.5 py-1.5">
         <h3 className="text-sm font-semibold text-wow-gold font-[family-name:var(--font-heading)]">
           {name}

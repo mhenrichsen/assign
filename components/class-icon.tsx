@@ -83,19 +83,3 @@ export function ClassBadge({
   )
 }
 
-export function ClassDot({
-  wowClass,
-  className,
-}: {
-  wowClass: WowClass
-  className?: string
-}) {
-  const color = CLASS_COLORS[wowClass]
-
-  return (
-    <span
-      className={cn("inline-block h-2.5 w-2.5 rounded-full shrink-0", className)}
-      style={{ backgroundColor: color, boxShadow: `0 0 4px ${color}80` }}
-    />
-  )
-}

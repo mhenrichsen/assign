@@ -23,15 +23,3 @@ export const RAID_INSTANCES: RaidInstance[] = [
     encounters: [generalAssignments, magtheridon],
   },
 ]
-
-export function getEncountersByRaid(raidId: string): EncounterDef[] {
-  return (
-    RAID_INSTANCES.find((r) => r.id === raidId)?.encounters ?? []
-  )
-}
-
-export function getEncounter(id: string): EncounterDef | undefined {
-  return ALL_ENCOUNTERS.find((e) => e.id === id)
-}
-
-export { generalAssignments, maulgar, gruul, magtheridon }

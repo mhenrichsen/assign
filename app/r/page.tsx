@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState } from "react"
 import {
   DndContext,
   DragOverlay,
@@ -11,14 +11,13 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core"
 import { RaidProvider, useRaid } from "@/lib/raid-context"
-import { ALL_ENCOUNTERS } from "@/lib/encounters"
-import { decodeSession } from "@/lib/url-codec"
 import { RaidHeader } from "@/components/raid/raid-header"
 import { RosterPanel } from "@/components/roster/roster-panel"
 import { EncounterWorkspace } from "@/components/encounter/encounter-workspace"
 import { PlayerCardOverlay } from "@/components/roster/player-card"
 import type { Player, AssignmentSlot } from "@/lib/types"
-import { useUrlHash } from "@/hooks/use-url-hash"
+import { useInitialEncounters } from "@/hooks/use-initial-encounters"
+import { useAutoPrefill } from "@/hooks/use-auto-prefill"
 
 function RaidEditor() {
   const { session, dispatch, encounters } = useRaid()
@@ -26,6 +25,9 @@ function RaidEditor() {
     encounters[0]?.id ?? ""
   )
   const [activePlayer, setActivePlayer] = useState<Player | null>(null)
+
+  // Auto-prefill all encounters when roster changes
+  useAutoPrefill(encounters, session, dispatch)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -56,15 +58,13 @@ function RaidEditor() {
     // Check class restriction
     if (slot.accepts && !slot.accepts.includes(player.class)) return
 
-    // Check max players
+    // Check max players (respect slotMaxOverrides from "+" button)
     const encounterAssignments = session.encounters[encounterId] ?? {}
     const slotPlayers = encounterAssignments[slot.id] ?? []
-    const maxPlayers = slot.multi ? (slot.maxPlayers ?? 99) : 1
+    const overriddenMax = session.slotMaxOverrides?.[encounterId]?.[slot.id]
+    const maxPlayers = slot.multi ? (overriddenMax ?? slot.maxPlayers ?? 99) : 1
 
-    // If player is already in this slot, do nothing
     if (slotPlayers.includes(player.id)) return
-
-    // If slot is full, deny
     if (slotPlayers.length >= maxPlayers) return
 
     dispatch({
@@ -99,21 +99,6 @@ function RaidEditor() {
       </DragOverlay>
     </DndContext>
   )
-}
-
-function useInitialEncounters() {
-  const [hash] = useUrlHash()
-
-  return useMemo(() => {
-    if (!hash) return null
-
-    const session = decodeSession(hash)
-    if (!session) return null
-
-    const encounterIds = Object.keys(session.encounters)
-    const matched = ALL_ENCOUNTERS.filter((e) => encounterIds.includes(e.id))
-    return matched.length > 0 ? matched : ALL_ENCOUNTERS
-  }, [hash])
 }
 
 export default function RaidPage() {
