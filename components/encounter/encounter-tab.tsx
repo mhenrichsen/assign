@@ -6,14 +6,7 @@ import { SlotGroup } from "./slot-group"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { BOSS_META } from "@/lib/encounter-meta"
 import { useRaid } from "@/lib/raid-context"
-import {
-  buildGeneralEncounter,
-  prefillGeneralAssignments,
-} from "@/lib/encounters/general"
-import {
-  buildMdSlots,
-  prefillMdAssignments,
-} from "@/lib/encounters/misdirection"
+import { resolveEncounter, computePrefills } from "@/lib/encounters/resolver"
 
 export function EncounterTab({
   encounter,
@@ -24,60 +17,21 @@ export function EncounterTab({
 }) {
   const { session, dispatch } = useRaid()
   const meta = BOSS_META[encounter.id]
-  const hunters = useMemo(
-    () => session.roster.filter((p) => p.class === "Hunter"),
-    [session.roster]
+
+  // Resolve encounter: inject dynamic slots based on roster
+  const resolved = useMemo(
+    () => resolveEncounter(encounter, session.roster),
+    [encounter, session.roster]
   )
 
-  // Build the resolved encounter with dynamic slots
-  const resolvedEncounter = useMemo(() => {
-    if (encounter.id === "general" && session.roster.length > 0) {
-      return buildGeneralEncounter(session.roster)
-    }
-
-    // For boss encounters, inject MD slots based on hunters
-    if (hunters.length > 0 && encounter.id !== "general") {
-      const mdSlots = buildMdSlots(encounter.id, hunters)
-      return {
-        ...encounter,
-        slots: [...encounter.slots, ...mdSlots],
-      }
-    }
-
-    return encounter
-  }, [encounter, session.roster, hunters])
-
-  // Auto-prefill general assignments
+  // Auto-prefill empty slots based on roster composition
   useEffect(() => {
-    if (encounter.id !== "general") return
     if (session.roster.length === 0) return
 
-    const existing = session.encounters["general"] ?? {}
-    const prefilled = prefillGeneralAssignments(session.roster)
-
-    for (const [slotId, playerIds] of Object.entries(prefilled)) {
-      if (existing[slotId] && existing[slotId].length > 0) continue
-      for (const playerId of playerIds) {
-        dispatch({
-          type: "ASSIGN_PLAYER",
-          encounterId: "general",
-          slotId,
-          playerId,
-        })
-      }
-    }
-  }, [encounter.id, session.roster, session.encounters, dispatch])
-
-  // Auto-prefill MD slots for boss encounters — fill any empty MD slots
-  useEffect(() => {
-    if (encounter.id === "general") return
-    if (hunters.length === 0) return
-
     const existing = session.encounters[encounter.id] ?? {}
-    const prefilled = prefillMdAssignments(encounter.id, hunters)
+    const prefills = computePrefills(encounter, session.roster)
 
-    for (const [slotId, playerIds] of Object.entries(prefilled)) {
-      // Only prefill if this specific slot is empty
+    for (const [slotId, playerIds] of Object.entries(prefills)) {
       if (existing[slotId] && existing[slotId].length > 0) continue
       for (const playerId of playerIds) {
         dispatch({
@@ -88,26 +42,23 @@ export function EncounterTab({
         })
       }
     }
-  }, [encounter.id, hunters, session.encounters, dispatch])
+  }, [encounter, session.roster, session.encounters, dispatch])
 
-  // Group slots
-  const groups: {
-    name: string
-    slots: typeof resolvedEncounter.slots
-  }[] = []
-  const seen = new Set<string>()
-
-  for (const slot of resolvedEncounter.slots) {
-    if (!seen.has(slot.group)) {
-      seen.add(slot.group)
-      groups.push({
-        name: slot.group,
-        slots: resolvedEncounter.slots.filter(
-          (s) => s.group === slot.group
-        ),
-      })
+  // Group slots by their group field
+  const groups = useMemo(() => {
+    const result: { name: string; slots: typeof resolved.slots }[] = []
+    const seen = new Set<string>()
+    for (const slot of resolved.slots) {
+      if (!seen.has(slot.group)) {
+        seen.add(slot.group)
+        result.push({
+          name: slot.group,
+          slots: resolved.slots.filter((s) => s.group === slot.group),
+        })
+      }
     }
-  }
+    return result
+  }, [resolved])
 
   return (
     <ScrollArea className="h-full">
@@ -120,10 +71,10 @@ export function EncounterTab({
           )}
           <div>
             <h2 className="text-lg font-semibold text-wow-gold-light font-[family-name:var(--font-heading)]">
-              {resolvedEncounter.name}
+              {resolved.name}
             </h2>
             <p className="text-sm text-[#a89880]">
-              {resolvedEncounter.description}
+              {resolved.description}
             </p>
           </div>
         </div>
@@ -133,7 +84,7 @@ export function EncounterTab({
               key={group.name}
               name={group.name}
               slots={group.slots}
-              encounterId={resolvedEncounter.id}
+              encounterId={resolved.id}
               readOnly={readOnly}
             />
           ))}
