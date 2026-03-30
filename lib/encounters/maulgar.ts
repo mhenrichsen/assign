@@ -113,25 +113,5 @@ export const maulgar: EncounterDef = {
       repeatable: true,
     },
 
-    // Misdirections
-    {
-      id: "maulgar-md-1",
-      label: "{ability:misdirection} Misdirection 1",
-      group: "Misdirections",
-      multi: true,
-      maxPlayers: 2,
-      pairLabels: ["Hunter", "Target"],
-      description: "Hunter → their MD target on pull",
-    },
-    {
-      id: "maulgar-md-2",
-      label: "{ability:misdirection} Misdirection 2",
-      group: "Misdirections",
-      multi: true,
-      maxPlayers: 2,
-      repeatable: true,
-      pairLabels: ["Hunter", "Target"],
-      description: "Hunter → their MD target on pull",
-    },
   ],
 }

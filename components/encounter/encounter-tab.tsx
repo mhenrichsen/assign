@@ -10,6 +10,10 @@ import {
   buildGeneralEncounter,
   prefillGeneralAssignments,
 } from "@/lib/encounters/general"
+import {
+  buildMdSlots,
+  prefillMdAssignments,
+} from "@/lib/encounters/misdirection"
 
 export function EncounterTab({
   encounter,
@@ -20,16 +24,30 @@ export function EncounterTab({
 }) {
   const { session, dispatch } = useRaid()
   const meta = BOSS_META[encounter.id]
+  const hunters = useMemo(
+    () => session.roster.filter((p) => p.class === "Hunter"),
+    [session.roster]
+  )
 
-  // For General Assignments, dynamically build encounter based on roster
+  // Build the resolved encounter with dynamic slots
   const resolvedEncounter = useMemo(() => {
     if (encounter.id === "general" && session.roster.length > 0) {
       return buildGeneralEncounter(session.roster)
     }
-    return encounter
-  }, [encounter, session.roster])
 
-  // Auto-prefill general assignments when first viewed with a roster
+    // For boss encounters, inject MD slots based on hunters
+    if (hunters.length > 0 && encounter.id !== "general") {
+      const mdSlots = buildMdSlots(encounter.id, hunters)
+      return {
+        ...encounter,
+        slots: [...encounter.slots, ...mdSlots],
+      }
+    }
+
+    return encounter
+  }, [encounter, session.roster, hunters])
+
+  // Auto-prefill general assignments
   useEffect(() => {
     if (encounter.id !== "general") return
     if (session.roster.length === 0) return
@@ -38,20 +56,40 @@ export function EncounterTab({
     if (existing && Object.keys(existing).length > 0) return
 
     const prefilled = prefillGeneralAssignments(session.roster)
-    if (Object.keys(prefilled).length > 0) {
-      // Dispatch each prefilled assignment
-      for (const [slotId, playerIds] of Object.entries(prefilled)) {
-        for (const playerId of playerIds) {
-          dispatch({
-            type: "ASSIGN_PLAYER",
-            encounterId: "general",
-            slotId,
-            playerId,
-          })
-        }
+    for (const [slotId, playerIds] of Object.entries(prefilled)) {
+      for (const playerId of playerIds) {
+        dispatch({
+          type: "ASSIGN_PLAYER",
+          encounterId: "general",
+          slotId,
+          playerId,
+        })
       }
     }
   }, [encounter.id, session.roster, session.encounters, dispatch])
+
+  // Auto-prefill MD slots for boss encounters
+  useEffect(() => {
+    if (encounter.id === "general") return
+    if (hunters.length === 0) return
+
+    // Check if MDs are already assigned for this encounter
+    const existing = session.encounters[encounter.id]
+    const mdKey = `${encounter.id}-md-1`
+    if (existing && existing[mdKey] && existing[mdKey].length > 0) return
+
+    const prefilled = prefillMdAssignments(encounter.id, hunters)
+    for (const [slotId, playerIds] of Object.entries(prefilled)) {
+      for (const playerId of playerIds) {
+        dispatch({
+          type: "ASSIGN_PLAYER",
+          encounterId: encounter.id,
+          slotId,
+          playerId,
+        })
+      }
+    }
+  }, [encounter.id, hunters, session.encounters, dispatch])
 
   // Group slots
   const groups: {
