@@ -142,15 +142,15 @@ export function buildGeneralEncounter(roster: Player[]): EncounterDef {
     })
   })
 
-  // Battle res priority
+  // Battle res priority — one res per druid per fight
   dynamicSlots.push({
     id: "battle-res-1",
     label: "{ability:battle-res} Battle Res Priority",
     group: "Druid Utility",
     multi: true,
-    maxPlayers: 3,
+    maxPlayers: Math.max(druids.length, 1),
     repeatable: true,
-    description: "Priority targets for combat res",
+    description: `${druids.length} druid${druids.length !== 1 ? "s" : ""} = ${druids.length} combat res`,
   })
 
   // Generate MD slots — one per hunter
