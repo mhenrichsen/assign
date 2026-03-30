@@ -156,14 +156,11 @@ export function buildGeneralEncounter(roster: Player[]): EncounterDef {
 
     // --- Shaman & Priest ---
     {
-      id: "bloodlust-1",
+      id: "bloodlust",
       label: "{ability:bloodlust} Bloodlust / Heroism",
       group: "Shaman & Priest",
-      accepts: ["Shaman"],
-      multi: true,
-      maxPlayers: 5,
-      repeatable: true,
-      description: "First Bloodlust group (usually melee or healers)",
+      selectFrom: "Shaman",
+      description: "Raid-wide haste buff, one shaman casts it",
     },
     {
       id: "shadow-weaving",
