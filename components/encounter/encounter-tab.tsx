@@ -52,11 +52,11 @@ export function EncounterTab({
     if (encounter.id !== "general") return
     if (session.roster.length === 0) return
 
-    const existing = session.encounters["general"]
-    if (existing && Object.keys(existing).length > 0) return
-
+    const existing = session.encounters["general"] ?? {}
     const prefilled = prefillGeneralAssignments(session.roster)
+
     for (const [slotId, playerIds] of Object.entries(prefilled)) {
+      if (existing[slotId] && existing[slotId].length > 0) continue
       for (const playerId of playerIds) {
         dispatch({
           type: "ASSIGN_PLAYER",
@@ -68,18 +68,17 @@ export function EncounterTab({
     }
   }, [encounter.id, session.roster, session.encounters, dispatch])
 
-  // Auto-prefill MD slots for boss encounters
+  // Auto-prefill MD slots for boss encounters — fill any empty MD slots
   useEffect(() => {
     if (encounter.id === "general") return
     if (hunters.length === 0) return
 
-    // Check if MDs are already assigned for this encounter
-    const existing = session.encounters[encounter.id]
-    const mdKey = `${encounter.id}-md-1`
-    if (existing && existing[mdKey] && existing[mdKey].length > 0) return
-
+    const existing = session.encounters[encounter.id] ?? {}
     const prefilled = prefillMdAssignments(encounter.id, hunters)
+
     for (const [slotId, playerIds] of Object.entries(prefilled)) {
+      // Only prefill if this specific slot is empty
+      if (existing[slotId] && existing[slotId].length > 0) continue
       for (const playerId of playerIds) {
         dispatch({
           type: "ASSIGN_PLAYER",
