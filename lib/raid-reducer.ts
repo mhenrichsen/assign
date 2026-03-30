@@ -25,6 +25,10 @@ export type RaidAction =
       slotId: string
       currentMax: number
     }
+  | {
+      type: "BATCH_ASSIGN"
+      assignments: { encounterId: string; slotId: string; playerId: string }[]
+    }
 
 function removePlayerFromEncounter(
   assignments: AssignmentMap,
@@ -127,6 +131,23 @@ export function raidReducer(
           },
         },
       }
+    }
+
+    case "BATCH_ASSIGN": {
+      let encounters = { ...state.encounters }
+      for (const { encounterId, slotId, playerId } of action.assignments) {
+        const enc = encounters[encounterId] ?? {}
+        const slotPlayers = enc[slotId] ?? []
+        if (slotPlayers.includes(playerId)) continue
+        encounters = {
+          ...encounters,
+          [encounterId]: {
+            ...enc,
+            [slotId]: [...slotPlayers, playerId],
+          },
+        }
+      }
+      return { ...state, encounters }
     }
 
     default:

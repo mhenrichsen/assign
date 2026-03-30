@@ -18,6 +18,11 @@ const INSTANCE_ICONS: Record<string, React.ReactNode> = {
   "magtheridons-lair": <Flame className="h-5 w-5" />,
 }
 
+function navigateToRaid(session: Omit<RaidSession, "createdAt">) {
+  const hash = encodeSession({ ...session, createdAt: Date.now() })
+  window.location.href = `/r#${hash}`
+}
+
 export default function HomePage() {
   const [name, setName] = useState("")
   const [raidIds, setRaidIds] = useState<string[]>([])
@@ -27,24 +32,19 @@ export default function HomePage() {
   const validPlayers = parsed.filter((l) => l.class)
 
   function handleDemo() {
-    const session: RaidSession = {
+    navigateToRaid({
       id: nanoid(8),
       name: "Wednesday Gruul + Mag",
       roster: DEMO_ROSTER,
       encounters: DEMO_ASSIGNMENTS,
-      createdAt: Date.now(),
-    }
-    const hash = encodeSession(session)
-    window.location.href = `/r#${hash}`
+    })
   }
 
   function handleCreate() {
     if (!name.trim()) return
     if (raidIds.length === 0) return
 
-    const players = parsedLinesToPlayers(
-      rosterText.trim() ? parseRosterText(rosterText) : []
-    )
+    const players = parsedLinesToPlayers(parsed)
     const encounters: RaidSession["encounters"] = {}
 
     for (const raidId of raidIds) {
@@ -56,16 +56,12 @@ export default function HomePage() {
       }
     }
 
-    const session: RaidSession = {
+    navigateToRaid({
       id: nanoid(8),
       name: name.trim(),
       roster: players,
       encounters,
-      createdAt: Date.now(),
-    }
-
-    const hash = encodeSession(session)
-    window.location.href = `/r#${hash}`
+    })
   }
 
   return (

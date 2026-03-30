@@ -7,13 +7,14 @@ import { CLASS_COLORS } from "@/lib/wow"
 import { ClassIcon } from "@/components/class-icon"
 import { ChevronDown, X } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
-import { buildGeneralEncounter } from "@/lib/encounters/general"
 
 export function PlayerSelect({
   slot,
+  allSlots,
   encounterId,
 }: {
   slot: SlotType
+  allSlots: SlotType[]
   encounterId: string
 }) {
   const { session, dispatch } = useRaid()
@@ -27,9 +28,9 @@ export function PlayerSelect({
       ? session.roster.find((p) => p.id === assignedIds[0])
       : null
 
-  // Get players of the right class
-  const classPlayers = session.roster.filter(
-    (p) => p.class === slot.selectFrom
+  const classPlayers = useMemo(
+    () => session.roster.filter((p) => p.class === slot.selectFrom),
+    [session.roster, slot.selectFrom]
   )
 
   // Find players already taken by other slots in the same exclusive group
@@ -37,15 +38,7 @@ export function PlayerSelect({
     const taken = new Set<string>()
     if (!slot.exclusiveGroup) return taken
 
-    // Get all slots for this encounter to find ones in the same exclusive group
-    const encounterSlots =
-      encounterId === "general"
-        ? buildGeneralEncounter(session.roster).slots
-        : []
-
-    // Also check non-general encounters from the static definitions
-    // For simplicity, check all slots with same exclusiveGroup
-    const exclusiveSlotIds = encounterSlots
+    const exclusiveSlotIds = allSlots
       .filter(
         (s) =>
           s.exclusiveGroup === slot.exclusiveGroup && s.id !== slot.id
@@ -58,13 +51,7 @@ export function PlayerSelect({
     }
 
     return taken
-  }, [
-    slot.exclusiveGroup,
-    slot.id,
-    encounterId,
-    session.roster,
-    encounterAssignments,
-  ])
+  }, [slot.exclusiveGroup, slot.id, allSlots, encounterAssignments])
 
   const availablePlayers = classPlayers.filter(
     (p) => !takenPlayerIds.has(p.id) || p.id === assignedIds[0]
@@ -81,7 +68,6 @@ export function PlayerSelect({
   }, [])
 
   function handleSelect(player: Player) {
-    // Remove old assignment
     if (assignedIds.length > 0) {
       dispatch({
         type: "UNASSIGN_PLAYER",
@@ -118,7 +104,7 @@ export function PlayerSelect({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-1.5 rounded border border-[#3e3830] bg-[#12110e] px-2 py-1 text-sm hover:border-[#7a6a4a] transition-colors"
+        className="flex w-full items-center gap-1.5 rounded border border-border bg-wow-slot px-2 py-1 text-sm hover:border-wow-border transition-colors"
       >
         {assignedPlayer ? (
           <>
@@ -139,23 +125,23 @@ export function PlayerSelect({
               onKeyDown={(e) => {
                 if (e.key === "Enter") { e.stopPropagation(); handleClear() }
               }}
-              className="text-[#7a6a4a] hover:text-red-400 transition-colors cursor-pointer"
+              className="text-wow-border hover:text-red-400 transition-colors cursor-pointer"
             >
               <X className="h-3 w-3" />
             </span>
           </>
         ) : (
           <>
-            <span className="flex-1 text-left text-[#7a6a4a] italic">
+            <span className="flex-1 text-left text-wow-border italic">
               Select {slot.selectFrom}...
             </span>
-            <ChevronDown className="h-3 w-3 text-[#7a6a4a]" />
+            <ChevronDown className="h-3 w-3 text-wow-border" />
           </>
         )}
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded border border-[#3e3830] bg-[#1c1a16] shadow-lg shadow-black/50 overflow-hidden">
+        <div className="absolute z-50 mt-1 w-full rounded border border-border bg-wow-panel shadow-lg shadow-black/50 overflow-hidden">
           {availablePlayers.length > 0 ? (
             availablePlayers.map((player) => {
               const pColor = CLASS_COLORS[player.class]
@@ -164,8 +150,8 @@ export function PlayerSelect({
                 <button
                   key={player.id}
                   onClick={() => handleSelect(player)}
-                  className={`flex w-full items-center gap-1.5 px-2 py-1.5 text-sm hover:bg-[#262420] transition-colors ${
-                    isCurrent ? "bg-[#262420]" : ""
+                  className={`flex w-full items-center gap-1.5 px-2 py-1.5 text-sm hover:bg-wow-panel-light transition-colors ${
+                    isCurrent ? "bg-wow-panel-light" : ""
                   }`}
                 >
                   <ClassIcon wowClass={player.class} size={13} />
@@ -176,7 +162,7 @@ export function PlayerSelect({
               )
             })
           ) : (
-            <div className="px-2 py-1.5 text-sm text-[#7a6a4a] italic">
+            <div className="px-2 py-1.5 text-sm text-wow-border italic">
               No {slot.selectFrom}s available
             </div>
           )}

@@ -6,16 +6,18 @@ import { DragDropSlot } from "./drag-drop-slot"
 
 export function AssignmentSlot({
   slot,
+  allSlots,
   encounterId,
   readOnly,
 }: {
   slot: SlotType
+  allSlots: SlotType[]
   encounterId: string
   readOnly?: boolean
 }) {
   if (slot.selectFrom) {
     return (
-      <SelectSlot slot={slot} encounterId={encounterId} readOnly={readOnly} />
+      <SelectSlot slot={slot} allSlots={allSlots} encounterId={encounterId} readOnly={readOnly} />
     )
   }
 

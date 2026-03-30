@@ -2,7 +2,6 @@
 
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -70,17 +69,9 @@ export function RaidProvider({
     return () => clearTimeout(timer)
   }, [session, setHash])
 
-  const wrappedDispatch = useCallback((action: RaidAction) => {
-    dispatch(action)
-  }, [])
-
   return (
     <RaidContext.Provider
-      value={{
-        session,
-        dispatch: wrappedDispatch,
-        encounters,
-      }}
+      value={{ session, dispatch, encounters }}
     >
       {children}
     </RaidContext.Provider>

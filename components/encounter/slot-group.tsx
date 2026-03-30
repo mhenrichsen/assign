@@ -4,11 +4,13 @@ import { AssignmentSlot } from "./assignment-slot"
 export function SlotGroup({
   name,
   slots,
+  allSlots,
   encounterId,
   readOnly,
 }: {
   name: string
   slots: SlotType[]
+  allSlots: SlotType[]
   encounterId: string
   readOnly?: boolean
 }) {
@@ -24,6 +26,7 @@ export function SlotGroup({
           <AssignmentSlot
             key={slot.id}
             slot={slot}
+            allSlots={allSlots}
             encounterId={encounterId}
             readOnly={readOnly}
           />

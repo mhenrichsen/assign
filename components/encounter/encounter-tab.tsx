@@ -4,7 +4,6 @@ import { useMemo } from "react"
 import type { EncounterDef } from "@/lib/types"
 import { SlotGroup } from "./slot-group"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { BOSS_META } from "@/lib/encounter-meta"
 import { useRaid } from "@/lib/raid-context"
 import { resolveEncounter } from "@/lib/encounters/resolver"
 
@@ -16,7 +15,6 @@ export function EncounterTab({
   readOnly?: boolean
 }) {
   const { session } = useRaid()
-  const meta = BOSS_META[encounter.id]
 
   // Resolve encounter: inject dynamic slots based on roster
   const resolved = useMemo(
@@ -52,6 +50,7 @@ export function EncounterTab({
               key={group.name}
               name={group.name}
               slots={group.slots}
+              allSlots={resolved.slots}
               encounterId={resolved.id}
               readOnly={readOnly}
             />

@@ -67,7 +67,6 @@ export const DEMO_ASSIGNMENTS: Record<string, Record<string, string[]>> = {
   gruul: {
     "gruul-mt": ["demo-01"], // Thunderclap
     "gruul-ot1": ["demo-03"], // Ironbark
-    "gruul-ot2": ["demo-24"], // Clawstrike (bear)
     "gruul-mt-heal": ["demo-12", "demo-04", "demo-14", "demo-25"], // Faithhealer, Holylight, Stormtotem, Lifebloom
     "gruul-ot-heal": ["demo-11", "demo-05", "demo-16"], // Prayerful, Divineaura, Tidalforce
     "gruul-raid-heal": ["demo-13", "demo-15", "demo-23"], // Spiritbind, Earthcaller, Moonshift
@@ -87,7 +86,11 @@ export const DEMO_ASSIGNMENTS: Record<string, Record<string, string[]>> = {
     "cube-3": ["demo-22"], // Soulreap
     "cube-4": ["demo-08"], // Deadshot
     "cube-5": ["demo-07"], // Arrowstorm
-    "channeler-interrupt": ["demo-09", "demo-10", "demo-02", "demo-06", "demo-17"], // melee + Frostbolt
+    "interrupt-1": ["demo-09"], // Shadowstab
+    "interrupt-2": ["demo-10"], // Backstabber
+    "interrupt-3": ["demo-02"], // Shieldwall
+    "interrupt-4": ["demo-06"], // Justicar
+    "interrupt-5": ["demo-17"], // Frostbolt
     "mag-raid-heal": ["demo-13", "demo-04", "demo-14", "demo-25"], // Spiritbind, Holylight, Stormtotem, Lifebloom
   },
 }

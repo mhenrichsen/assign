@@ -14,10 +14,12 @@ import { SlotLabel } from "@/components/raid-mark"
 
 export function SelectSlot({
   slot,
+  allSlots,
   encounterId,
   readOnly,
 }: {
   slot: SlotType
+  allSlots: SlotType[]
   encounterId: string
   readOnly?: boolean
 }) {
@@ -55,7 +57,7 @@ export function SelectSlot({
           </div>
         )
       ) : (
-        <PlayerSelect slot={slot} encounterId={encounterId} />
+        <PlayerSelect slot={slot} allSlots={allSlots} encounterId={encounterId} />
       )}
     </div>
   )
