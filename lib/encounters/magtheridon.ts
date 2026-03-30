@@ -28,8 +28,12 @@ export const magtheridon: EncounterDef = {
     { id: "cube-4", label: "{triangle} Triangle", group: "Cube Clickers", description: "Click during Blast Nova to banish Magtheridon" },
     { id: "cube-5", label: "{skull} Skull", group: "Cube Clickers", description: "Click during Blast Nova to banish Magtheridon" },
 
-    // Interrupts
-    { id: "channeler-interrupt", label: "Shadow Bolt Volley Interrupts", group: "Interrupts", multi: true, description: "Interrupt Shadow Bolt Volley on channelers" },
+    // Interrupts — Shadow Bolt Volley + Dark Mending per channeler
+    { id: "interrupt-1", label: "{star} Interrupts", group: "Interrupts", multi: true, description: "Interrupt Shadow Bolt Volley & Dark Mending" },
+    { id: "interrupt-2", label: "{circle} Interrupts", group: "Interrupts", multi: true, description: "Interrupt Shadow Bolt Volley & Dark Mending" },
+    { id: "interrupt-3", label: "{diamond} Interrupts", group: "Interrupts", multi: true, description: "Interrupt Shadow Bolt Volley & Dark Mending" },
+    { id: "interrupt-4", label: "{triangle} Interrupts", group: "Interrupts", multi: true, description: "Interrupt Shadow Bolt Volley & Dark Mending" },
+    { id: "interrupt-5", label: "{skull} Interrupts", group: "Interrupts", multi: true, description: "Interrupt Shadow Bolt Volley & Dark Mending" },
 
     // Raid
     { id: "mag-raid-heal", label: "Raid Healers", group: "Raid", multi: true },
