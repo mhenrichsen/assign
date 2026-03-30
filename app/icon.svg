@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#1c1a16"/>
+  <g transform="translate(16,16)">
+    <!-- Left sword -->
+    <g transform="rotate(-45)">
+      <rect x="-1.5" y="-12" width="3" height="17" rx="0.5" fill="#c9aa71"/>
+      <rect x="-4" y="3" width="8" height="2.5" rx="1" fill="#8b7340"/>
+      <rect x="-1" y="5" width="2" height="5" rx="0.5" fill="#7a6a4a"/>
+    </g>
+    <!-- Right sword -->
+    <g transform="rotate(45)">
+      <rect x="-1.5" y="-12" width="3" height="17" rx="0.5" fill="#c9aa71"/>
+      <rect x="-4" y="3" width="8" height="2.5" rx="1" fill="#8b7340"/>
+      <rect x="-1" y="5" width="2" height="5" rx="0.5" fill="#7a6a4a"/>
+    </g>
+  </g>
+</svg>

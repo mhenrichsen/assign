@@ -1,21 +1,77 @@
-# Next.js template
+# Assign
 
-This is a Next.js template with shadcn/ui.
+Drag-and-drop raid assignments for World of Warcraft: The Burning Crusade.
 
-## Adding components
+Raid leaders create a session, import their roster, assign players to encounter roles, and share a URL with the raid. No accounts, no database — everything is encoded in the URL.
 
-To add components to your app, run the following command:
+## Features
+
+- **Drag & drop** players from the roster into encounter slots (tanks, healers, interrupts, cube clickers, etc.)
+- **General Assignments** tab with smart auto-fill — innervates auto-match druids, MDs auto-match hunters
+- **Dropdown selectors** for warlock curses, paladin judgements, mage debuffs — with exclusivity (one curse per warlock)
+- **WoW raid marks** (Star, Circle, Diamond, Triangle, Skull) on Magtheridon channeler/cube assignments
+- **Actual WoW ability icons** for all debuffs, buffs, and utility spells
+- **Shareable URLs** — all state compressed into the URL hash, no server needed
+- **Read-only view** at `/view#...` for raid members
+- **Dynamic slots** — "+" button to expand healer/interrupt/MD counts as needed
+- **Paired slots** — Misdirection shows "Hunter → Target", Innervate shows "Druid → Target"
+- **25-man demo** — one click to see a fully populated raid with assignments
+
+## Encounters
+
+Currently supports TBC Phase 1 raids:
+
+- **Gruul's Lair** — High King Maulgar (5-mob council) + Gruul the Dragonkiller
+- **Magtheridon's Lair** — 5 channelers, 5 cube clickers, interrupts
+
+Each raid includes a **General Assignments** tab for raid-wide utility (curses, debuffs, innervates, MDs, bloodlust, judgements).
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) 16 with App Router
+- [React](https://react.dev) 19
+- [TypeScript](https://www.typescriptlang.org) (strict mode)
+- [Tailwind CSS](https://tailwindcss.com) 4 + [shadcn/ui](https://ui.shadcn.com)
+- [@dnd-kit](https://dndkit.com) for drag and drop
+- [fflate](https://github.com/101arrowz/fflate) for URL compression
+
+## Getting Started
 
 ```bash
-npx shadcn@latest add button
+npm install
+npm run dev
 ```
 
-This will place the ui components in the `components` directory.
+Open [http://localhost:3000](http://localhost:3000) and click **Try Demo** to see it in action.
 
-## Using components
+## How Sharing Works
 
-To use the components in your app, import them as follows:
+All raid data (roster, assignments, slot overrides) is serialized to JSON, gzip-compressed, and base64url-encoded into the URL hash fragment:
 
-```tsx
-import { Button } from "@/components/ui/button";
+```
+https://assign.example.com/r#eJyLzs...
+```
+
+- No server storage required
+- Hash fragment is never sent to the server
+- 25-man raids with full assignments compress to ~500-1500 characters
+- `/r#...` is the editor, `/view#...` is read-only
+
+## Project Structure
+
+```
+app/
+  page.tsx          — Landing page (create raid / try demo)
+  r/page.tsx        — Raid editor (DnD + roster sidebar)
+  view/page.tsx     — Read-only view for raid members
+components/
+  encounter/        — Slot groups, drag-drop slots, select dropdowns
+  roster/           — Player cards, import dialog, class filters
+  raid/             — Header, share dialog
+lib/
+  encounters/       — Encounter definitions (Maulgar, Gruul, Magtheridon, General)
+  abilities.ts      — WoW ability icon mappings
+  raid-reducer.ts   — State management (useReducer)
+  raid-context.tsx   — React context + URL hash sync
+  url-codec.ts      — Gzip encode/decode for URL sharing
 ```
