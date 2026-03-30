@@ -72,6 +72,15 @@ export function buildGeneralEncounter(roster: Player[]): EncounterDef {
       description: "Reduces enemy attack power",
     },
 
+    // --- Rogue Debuffs ---
+    {
+      id: "expose-armor",
+      label: "{ability:expose-armor} Expose Armor",
+      group: "Rogue Debuffs",
+      selectFrom: "Rogue",
+      description: "Reduces target armor, does not stack with Sunder Armor",
+    },
+
     // --- Druid Utility ---
     {
       id: "faerie-fire",

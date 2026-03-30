@@ -39,6 +39,12 @@ export const ABILITIES: Record<string, Ability> = {
     icon: "ability_warrior_warcry",
   },
 
+  // Rogue
+  "expose-armor": {
+    name: "Expose Armor",
+    icon: "ability_warrior_riposte",
+  },
+
   // Hunter
   "hunters-mark": {
     name: "Hunter's Mark",
