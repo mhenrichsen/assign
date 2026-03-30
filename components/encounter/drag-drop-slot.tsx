@@ -68,7 +68,7 @@ export function DragDropSlot({
       <div className="mb-1 flex items-center gap-1">
         <span className="text-sm font-medium text-wow-gold leading-tight">
           <SlotLabel label={slot.label} />
-          {slot.multi && (
+          {slot.multi && slot.maxPlayers && (
             <span className="ml-1 text-[#a89880]">
               ({assignedPlayers.length}/{maxPlayers})
             </span>
