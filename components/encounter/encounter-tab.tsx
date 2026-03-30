@@ -43,21 +43,9 @@ export function EncounterTab({
   return (
     <ScrollArea className="h-full">
       <div className="p-3">
-        <div className="mb-3 flex items-center gap-3">
-          {meta && (
-            <span className="text-xl" role="img">
-              {meta.icon}
-            </span>
-          )}
-          <div>
-            <h2 className="text-lg font-semibold text-wow-gold-light font-[family-name:var(--font-heading)]">
-              {resolved.name}
-            </h2>
-            <p className="text-sm text-[#a89880]">
-              {resolved.description}
-            </p>
-          </div>
-        </div>
+        <p className="mb-3 text-sm text-[#a89880]">
+          {resolved.description}
+        </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {groups.map((group) => (
             <SlotGroup
