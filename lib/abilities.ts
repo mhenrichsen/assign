@@ -78,6 +78,10 @@ export const ABILITIES: Record<string, Ability> = {
     name: "Judgement of Light",
     icon: "spell_holy_healingaura",
   },
+  "judgement-of-crusader": {
+    name: "Judgement of the Crusader",
+    icon: "spell_holy_holysmite",
+  },
 
   // Mage
   "improved-scorch": {

@@ -146,6 +146,14 @@ export function buildGeneralEncounter(roster: Player[]): EncounterDef {
       exclusiveGroup: "paladin-judgement",
       description: "Attacks restore health to the attacker",
     },
+    {
+      id: "judgement-crusader",
+      label: "{ability:judgement-of-crusader} Judgement of the Crusader",
+      group: "Paladin Judgements",
+      selectFrom: "Paladin",
+      exclusiveGroup: "paladin-judgement",
+      description: "Increases Holy damage taken by target",
+    },
 
     // --- Mage Debuffs (dropdown) ---
     {
