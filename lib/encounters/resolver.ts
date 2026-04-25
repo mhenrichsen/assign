@@ -26,6 +26,37 @@ export function resolveEncounter(
   }
 }
 
+// Per-encounter spec defaults. Keyed by encounterId, then `<Class>:<Spec>` -> slot ids.
+// First matching player in roster order wins; existing assignments are never overwritten.
+const ENCOUNTER_SPEC_PREFILLS: Record<string, Record<string, string[]>> = {
+  general: {
+    "Mage:Fire": ["improved-scorch"],
+    "Mage:Frost": ["winters-chill"],
+    "Priest:Shadow": ["shadow-weaving"],
+    "Warrior:Protection": ["sunder-armor"],
+    "Druid:Balance": ["faerie-fire"],
+    "Druid:Dreamstate": ["faerie-fire"],
+    "Warlock:Affliction": ["curse-elements"],
+    "Rogue:Combat": ["expose-armor"],
+    "Paladin:Holy": ["judgement-wisdom"],
+    "Paladin:Retribution": ["judgement-crusader"],
+    "Paladin:Protection": ["judgement-light"],
+  },
+  maulgar: {
+    "Druid:Balance": ["kiggler-tank"],
+    "Druid:Dreamstate": ["kiggler-tank"],
+    "Warrior:Protection": ["maulgar-mt"],
+  },
+  gruul: {
+    "Warrior:Protection": ["gruul-mt"],
+    "Druid:Feral": ["gruul-ot1"],
+    "Paladin:Protection": ["gruul-ot1"],
+  },
+  magtheridon: {
+    "Warrior:Protection": ["mag-mt"],
+  },
+}
+
 /**
  * Compute auto-prefill assignments for an encounter based on roster.
  * Returns a map of slotId -> [playerIds] for slots that should be pre-populated.
@@ -54,6 +85,20 @@ export function computePrefills(
     hunters.forEach((hunter, i) => {
       prefills[`${encounter.id}-md-${i + 1}`] = [hunter.id]
     })
+  }
+
+  // Spec-based defaults — first matching player in roster order wins.
+  const specPrefills = ENCOUNTER_SPEC_PREFILLS[encounter.id]
+  if (specPrefills) {
+    for (const player of roster) {
+      if (!player.spec) continue
+      const slotIds = specPrefills[`${player.class}:${player.spec}`]
+      if (!slotIds) continue
+      for (const slotId of slotIds) {
+        if (prefills[slotId]) continue
+        prefills[slotId] = [player.id]
+      }
+    }
   }
 
   return prefills
