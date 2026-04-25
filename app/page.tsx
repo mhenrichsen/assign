@@ -3,12 +3,11 @@
 import { useState } from "react"
 import { nanoid } from "nanoid"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { RAID_INSTANCES } from "@/lib/encounters"
 import { encodeSession } from "@/lib/url-codec"
-import { parseRosterText, parsedLinesToPlayers } from "@/lib/roster-parser"
-import { ClassBadge } from "@/components/class-icon"
-import type { RaidSession } from "@/lib/types"
+import { ClassIcon } from "@/components/class-icon"
+import { CLASS_COLORS } from "@/lib/wow"
+import type { Player, RaidSession } from "@/lib/types"
 import { DEMO_ROSTER, DEMO_ASSIGNMENTS } from "@/lib/demo-roster"
 import { Swords, Shield, Flame, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -26,10 +25,10 @@ function navigateToRaid(session: Omit<RaidSession, "createdAt">) {
 export default function HomePage() {
   const [name, setName] = useState("")
   const [raidIds, setRaidIds] = useState<string[]>([])
-  const [rosterText, setRosterText] = useState("")
-
-  const parsed = rosterText.trim() ? parseRosterText(rosterText) : []
-  const validPlayers = parsed.filter((l) => l.class)
+  const [rhInput, setRhInput] = useState("")
+  const [rhPlayers, setRhPlayers] = useState<Player[]>([])
+  const [rhError, setRhError] = useState<string | null>(null)
+  const [rhLoading, setRhLoading] = useState(false)
 
   function handleDemo() {
     navigateToRaid({
@@ -40,11 +39,38 @@ export default function HomePage() {
     })
   }
 
+  async function handleFetchRaidHelper() {
+    setRhError(null)
+    setRhPlayers([])
+    if (!rhInput.trim()) return
+    setRhLoading(true)
+    try {
+      const res = await fetch("/api/raid-helper", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ input: rhInput }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setRhError(data?.error ?? "Failed to load raid plan")
+        return
+      }
+      const players = (data.players ?? []) as Player[]
+      setRhPlayers(players)
+      if (players.length === 0) {
+        setRhError("No players found in this raid plan")
+      }
+    } catch {
+      setRhError("Network error while fetching raid plan")
+    } finally {
+      setRhLoading(false)
+    }
+  }
+
   function handleCreate() {
     if (!name.trim()) return
     if (raidIds.length === 0) return
 
-    const players = parsedLinesToPlayers(parsed)
     const encounters: RaidSession["encounters"] = {}
 
     for (const raidId of raidIds) {
@@ -59,7 +85,7 @@ export default function HomePage() {
     navigateToRaid({
       id: nanoid(8),
       name: name.trim(),
-      roster: players,
+      roster: rhPlayers,
       encounters,
     })
   }
@@ -141,29 +167,54 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Roster */}
+          {/* Raid-Helper composition */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-wow-gold">
-              Roster{" "}
-              <span className="font-normal text-[#7a6a4a]">
-                (optional)
-              </span>
+              Raid-Helper Comp{" "}
+              <span className="font-normal text-[#7a6a4a]">(optional)</span>
             </label>
-            <Textarea
-              placeholder={`Tankboi Warrior\nHealzalot Priest\nPewpew Hunter\nSneakyguy Rogue`}
-              value={rosterText}
-              onChange={(e) => setRosterText(e.target.value)}
-              rows={8}
-              className="font-mono text-sm bg-[#12110e] border-[#3e3830] text-wow-gold-light placeholder:text-[#3e3830] focus:border-wow-gold/50"
-            />
-            {validPlayers.length > 0 && (
+            <div className="flex gap-2">
+              <Input
+                placeholder="https://raid-helper.xyz/raidplan/..."
+                value={rhInput}
+                onChange={(e) => setRhInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    handleFetchRaidHelper()
+                  }
+                }}
+                className="bg-[#12110e] border-[#3e3830] text-wow-gold-light placeholder:text-[#3e3830] focus:border-wow-gold/50"
+              />
+              <button
+                type="button"
+                onClick={handleFetchRaidHelper}
+                disabled={!rhInput.trim() || rhLoading}
+                className="rounded border border-[#3e3830] bg-[#12110e] px-3 py-1 text-sm text-[#a89880] hover:border-[#7a6a4a] hover:text-wow-gold disabled:opacity-30 transition-colors"
+              >
+                {rhLoading ? "Loading…" : "Fetch"}
+              </button>
+            </div>
+            {rhError && <p className="text-xs text-red-400">{rhError}</p>}
+            {rhPlayers.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {validPlayers.map((p, i) => (
-                  <ClassBadge key={i} wowClass={p.class!} size="xs" />
+                {rhPlayers.map((p) => (
+                  <span
+                    key={p.id}
+                    className="inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px]"
+                    style={{
+                      color: CLASS_COLORS[p.class],
+                      backgroundColor: `${CLASS_COLORS[p.class]}15`,
+                      borderColor: `${CLASS_COLORS[p.class]}30`,
+                    }}
+                  >
+                    <ClassIcon wowClass={p.class} size={12} />
+                    {p.name}
+                  </span>
                 ))}
                 <span className="self-center text-xs text-[#7a6a4a]">
-                  {validPlayers.length} player
-                  {validPlayers.length !== 1 && "s"}
+                  {rhPlayers.length} player
+                  {rhPlayers.length !== 1 && "s"}
                 </span>
               </div>
             )}
