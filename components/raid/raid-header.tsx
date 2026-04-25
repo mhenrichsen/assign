@@ -1,20 +1,49 @@
 "use client"
 
+import { useEffect, useRef, useState } from "react"
 import { useRaid } from "@/lib/raid-context"
 import { ShareDialog } from "./share-dialog"
 import Link from "next/link"
-import { Swords } from "lucide-react"
+import { Pencil, Swords } from "lucide-react"
 
 export function RaidHeader({
   activeEncounterId,
 }: {
   activeEncounterId?: string
 }) {
-  const { session, encounters } = useRaid()
+  const { session, dispatch, encounters } = useRaid()
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(session.name)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const raidNames = [
     ...new Set(encounters.map((e) => e.raidName)),
   ].join(" + ")
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    }
+  }, [editing])
+
+  function startEditing() {
+    setDraft(session.name)
+    setEditing(true)
+  }
+
+  function commit() {
+    const next = draft.trim()
+    if (next && next !== session.name) {
+      dispatch({ type: "SET_NAME", name: next })
+    }
+    setEditing(false)
+  }
+
+  function cancel() {
+    setDraft(session.name)
+    setEditing(false)
+  }
 
   return (
     <div className="wow-header flex items-center justify-between px-4 py-2.5">
@@ -27,9 +56,29 @@ export function RaidHeader({
           <span className="text-base font-[family-name:var(--font-heading)]">Assign</span>
         </Link>
         <span className="text-[#3e3830]">/</span>
-        <h1 className="font-semibold text-wow-gold-light font-[family-name:var(--font-heading)]">
-          {session.name || "Untitled Raid"}
-        </h1>
+        {editing ? (
+          <input
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={commit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") commit()
+              else if (e.key === "Escape") cancel()
+            }}
+            placeholder="Untitled Raid"
+            className="rounded border border-wow-gold/40 bg-[#12110e] px-2 py-0.5 text-base font-semibold text-wow-gold-light font-[family-name:var(--font-heading)] focus:border-wow-gold focus:outline-none"
+          />
+        ) : (
+          <button
+            onClick={startEditing}
+            title="Rename raid"
+            className="group flex items-center gap-1.5 rounded px-1 py-0.5 -mx-1 -my-0.5 text-base font-semibold text-wow-gold-light font-[family-name:var(--font-heading)] hover:bg-[#262420] transition-colors"
+          >
+            {session.name || "Untitled Raid"}
+            <Pencil className="h-3 w-3 text-[#7a6a4a] opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+        )}
         <span className="text-sm text-[#7a6a4a]">{raidNames}</span>
       </div>
       <div className="flex items-center gap-2">
