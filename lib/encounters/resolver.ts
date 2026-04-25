@@ -101,6 +101,12 @@ export function computePrefills(
     }
   }
 
+  // Conflict resolution: Expose Armor (Combat rogue) supplants Sunder Armor —
+  // they don't stack, and Expose is the better debuff.
+  if (encounter.id === "general" && prefills["expose-armor"]) {
+    delete prefills["sunder-armor"]
+  }
+
   return prefills
 }
 
