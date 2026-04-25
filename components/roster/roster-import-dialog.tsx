@@ -15,7 +15,8 @@ import { Input } from "@/components/ui/input"
 import { Upload } from "lucide-react"
 import { useRaid } from "@/lib/raid-context"
 import { parseRosterText, parsedLinesToPlayers } from "@/lib/roster-parser"
-import { ClassBadge, ClassIcon } from "@/components/class-icon"
+import { ClassBadge } from "@/components/class-icon"
+import { PlayerIcon } from "@/components/player-icon"
 import { CLASS_COLORS } from "@/lib/wow"
 import type { Player } from "@/lib/types"
 
@@ -201,7 +202,7 @@ export function RosterImportDialog() {
                         borderColor: `${CLASS_COLORS[p.class]}30`,
                       }}
                     >
-                      <ClassIcon wowClass={p.class} size={12} />
+                      <PlayerIcon player={p} size={12} />
                       {p.name}
                     </span>
                   ))}

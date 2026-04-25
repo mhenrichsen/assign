@@ -24,6 +24,12 @@ export const CLASS_COLORS: Record<WowClass, string> = {
   Druid: "#FF7D0A",
 }
 
+export function getSpecIconUrl(specIcon: string | undefined | null): string | null {
+  if (!specIcon) return null
+  if (!/^\d+$/.test(specIcon)) return null
+  return `https://cdn.discordapp.com/emojis/${specIcon}.png`
+}
+
 export const CLASS_ABBREVIATIONS: Record<string, WowClass> = {
   warrior: "Warrior",
   warr: "Warrior",

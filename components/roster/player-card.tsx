@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities"
 import type { Player } from "@/lib/types"
 import { CLASS_COLORS } from "@/lib/wow"
 import { cn } from "@/lib/utils"
-import { ClassIcon } from "@/components/class-icon"
+import { PlayerIcon } from "@/components/player-icon"
 import { X } from "lucide-react"
 
 export function PlayerCard({
@@ -41,7 +41,7 @@ export function PlayerCard({
         isDragging && "opacity-40"
       )}
     >
-      <ClassIcon wowClass={player.class} size={16} />
+      <PlayerIcon player={player} size={16} />
       <span className="flex-1 truncate font-medium" style={{ color }}>
         {player.name}
       </span>
@@ -70,7 +70,7 @@ export function PlayerCardOverlay({ player }: { player: Player }) {
 
   return (
     <div className="flex cursor-grabbing items-center gap-2 rounded border border-wow-gold/50 bg-[#262420] px-2.5 py-1.5 text-sm shadow-lg shadow-black/50 select-none">
-      <ClassIcon wowClass={player.class} size={16} />
+      <PlayerIcon player={player} size={16} />
       <span className="truncate font-medium" style={{ color }}>
         {player.name}
       </span>

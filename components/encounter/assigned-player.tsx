@@ -2,7 +2,7 @@
 
 import type { Player } from "@/lib/types"
 import { CLASS_COLORS } from "@/lib/wow"
-import { ClassIcon } from "@/components/class-icon"
+import { PlayerIcon } from "@/components/player-icon"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +27,7 @@ export function AssignedPlayer({
       )}
       style={{ borderLeftColor: color, borderLeftWidth: 2 }}
     >
-      <ClassIcon wowClass={player.class} size={compact ? 13 : 16} />
+      <PlayerIcon player={player} size={compact ? 13 : 16} />
       <span
         className={cn("truncate font-medium", compact && "text-sm")}
         style={{ color }}

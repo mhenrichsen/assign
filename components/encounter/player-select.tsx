@@ -4,7 +4,7 @@ import { useMemo } from "react"
 import type { AssignmentSlot as SlotType, Player } from "@/lib/types"
 import { useRaid } from "@/lib/raid-context"
 import { CLASS_COLORS } from "@/lib/wow"
-import { ClassIcon } from "@/components/class-icon"
+import { PlayerIcon } from "@/components/player-icon"
 import { ChevronDown, X } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 
@@ -108,7 +108,7 @@ export function PlayerSelect({
       >
         {assignedPlayer ? (
           <>
-            <ClassIcon wowClass={assignedPlayer.class} size={13} />
+            <PlayerIcon player={assignedPlayer} size={13} />
             <span
               className="flex-1 text-left truncate font-medium"
               style={{ color }}
@@ -154,7 +154,7 @@ export function PlayerSelect({
                     isCurrent ? "bg-wow-panel-light" : ""
                   }`}
                 >
-                  <ClassIcon wowClass={player.class} size={13} />
+                  <PlayerIcon player={player} size={13} />
                   <span className="font-medium" style={{ color: pColor }}>
                     {player.name}
                   </span>

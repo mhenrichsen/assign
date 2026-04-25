@@ -5,7 +5,7 @@ import { nanoid } from "nanoid"
 import { Input } from "@/components/ui/input"
 import { RAID_INSTANCES } from "@/lib/encounters"
 import { encodeSession } from "@/lib/url-codec"
-import { ClassIcon } from "@/components/class-icon"
+import { PlayerIcon } from "@/components/player-icon"
 import { CLASS_COLORS } from "@/lib/wow"
 import type { Player, RaidSession } from "@/lib/types"
 import { DEMO_ROSTER, DEMO_ASSIGNMENTS } from "@/lib/demo-roster"
@@ -208,7 +208,7 @@ export default function HomePage() {
                       borderColor: `${CLASS_COLORS[p.class]}30`,
                     }}
                   >
-                    <ClassIcon wowClass={p.class} size={12} />
+                    <PlayerIcon player={p} size={12} />
                     {p.name}
                   </span>
                 ))}

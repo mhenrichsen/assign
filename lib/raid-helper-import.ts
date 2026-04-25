@@ -6,6 +6,7 @@ export interface RaidHelperSlot {
   name?: string
   className?: string
   specName?: string
+  specEmoteId?: string
 }
 
 export interface RaidHelperPlan {
@@ -39,6 +40,12 @@ export function slotToClass(slot: RaidHelperSlot): WowClass | null {
   return null
 }
 
+function normalizeSpecName(specName: string | undefined): string | undefined {
+  if (!specName) return undefined
+  const trimmed = specName.replace(/\d+$/, "").trim()
+  return trimmed || undefined
+}
+
 export function planToPlayers(plan: RaidHelperPlan): Player[] {
   if (!plan.slots) return []
   const players: Player[] = []
@@ -51,7 +58,11 @@ export function planToPlayers(plan: RaidHelperPlan): Player[] {
     const key = `${name}::${cls}`
     if (seen.has(key)) continue
     seen.add(key)
-    players.push({ id: nanoid(8), name, class: cls })
+    const spec = normalizeSpecName(slot.specName)
+    const specIcon = slot.specEmoteId && /^\d+$/.test(slot.specEmoteId)
+      ? slot.specEmoteId
+      : undefined
+    players.push({ id: nanoid(8), name, class: cls, spec, specIcon })
   }
   return players
 }

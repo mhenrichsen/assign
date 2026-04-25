@@ -13,6 +13,8 @@ export interface Player {
   id: string
   name: string
   class: WowClass
+  spec?: string
+  specIcon?: string
 }
 
 export interface AssignmentSlot {
