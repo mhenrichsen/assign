@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,19 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Share2, Copy, Check, Eye, Pencil, Link2, Loader2 } from "lucide-react"
 import { useRaid } from "@/lib/raid-context"
 import { encodeSession } from "@/lib/url-codec"
+
+const ALL = "__all__"
 
 type ShortenState =
   | { status: "idle" }
@@ -20,10 +29,22 @@ type ShortenState =
   | { status: "ready"; id: string; payload: string }
   | { status: "error"; message: string }
 
-export function ShareDialog() {
-  const { session } = useRaid()
+export function ShareDialog({
+  activeEncounterId,
+}: {
+  activeEncounterId?: string
+}) {
+  const { session, encounters } = useRaid()
   const [copied, setCopied] = useState<"edit" | "view" | null>(null)
   const [shorten, setShorten] = useState<ShortenState>({ status: "idle" })
+  const [scope, setScope] = useState<string>(activeEncounterId ?? ALL)
+
+  // Keep scope in sync when the user opens the dialog from a different tab
+  useEffect(() => {
+    if (activeEncounterId) setScope(activeEncounterId)
+  }, [activeEncounterId])
+
+  const scopeSuffix = scope === ALL ? "" : `/${scope}`
 
   function originPath(path: string) {
     if (typeof window === "undefined") return ""
@@ -31,16 +52,19 @@ export function ShareDialog() {
   }
 
   function getEditUrl() {
-    if (shorten.status === "ready") return originPath(`/r/${shorten.id}`)
+    if (shorten.status === "ready") {
+      return originPath(`/r/${shorten.id}${scopeSuffix}`)
+    }
     if (typeof window === "undefined") return ""
     return window.location.href
   }
 
   function getViewUrl() {
-    if (shorten.status === "ready") return originPath(`/view/${shorten.id}`)
+    if (shorten.status === "ready") {
+      return originPath(`/view/${shorten.id}${scopeSuffix}`)
+    }
     if (typeof window === "undefined") return ""
     const url = new URL(window.location.href)
-    // Strip a possible /r/<id> prefix back to /view#hash
     url.pathname = "/view"
     return url.toString()
   }
@@ -55,7 +79,6 @@ export function ShareDialog() {
   async function handleShorten() {
     const payload = encodeSession(session)
 
-    // Reuse cached id if the session hasn't changed since last shorten.
     if (shorten.status === "ready" && shorten.payload === payload) return
 
     setShorten({ status: "loading" })
@@ -120,6 +143,26 @@ export function ShareDialog() {
           </div>
           {shorten.status === "error" && (
             <p className="text-xs text-red-400">{shorten.message}</p>
+          )}
+          {isShort && encounters.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-wow-gold">
+                Show in preview
+              </label>
+              <Select value={scope} onValueChange={setScope}>
+                <SelectTrigger className="bg-[#12110e] border-[#3e3830] text-wow-gold-light">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All encounters (overview)</SelectItem>
+                  {encounters.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
           <div>
             <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-wow-gold">

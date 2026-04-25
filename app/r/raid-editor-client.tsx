@@ -83,7 +83,7 @@ function RaidEditor({ initialEncounterId }: { initialEncounterId?: string }) {
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-svh flex-col">
-        <RaidHeader />
+        <RaidHeader activeEncounterId={activeEncounterId} />
         <div className="flex flex-1 overflow-hidden">
           <RosterPanel activeEncounterId={activeEncounterId} />
           <div className="flex-1 overflow-hidden">

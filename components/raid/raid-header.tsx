@@ -5,7 +5,11 @@ import { ShareDialog } from "./share-dialog"
 import Link from "next/link"
 import { Swords } from "lucide-react"
 
-export function RaidHeader() {
+export function RaidHeader({
+  activeEncounterId,
+}: {
+  activeEncounterId?: string
+}) {
   const { session, encounters } = useRaid()
 
   const raidNames = [
@@ -29,7 +33,7 @@ export function RaidHeader() {
         <span className="text-sm text-[#7a6a4a]">{raidNames}</span>
       </div>
       <div className="flex items-center gap-2">
-        <ShareDialog />
+        <ShareDialog activeEncounterId={activeEncounterId} />
       </div>
     </div>
   )
