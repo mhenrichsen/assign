@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import type { EncounterDef, Player, RaidSession } from "@/lib/types"
 import { ALL_ENCOUNTERS } from "@/lib/encounters"
+import { resolveEncounter } from "@/lib/encounters/resolver"
+
+const ABILITY_REGEX = /\{ability:[^}]+\}\s*/gi
 
 const SITE_NAME = "Assign"
 const MAX_DESCRIPTION = 240
@@ -55,6 +58,7 @@ const MARK_LABELS: Record<string, string> = {
 
 function stripMarks(label: string): string {
   return label
+    .replace(ABILITY_REGEX, "")
     .replace(
       /\{(star|circle|diamond|triangle|moon|square|cross|skull)\}/gi,
       (_m, kind) => MARK_LABELS[kind.toLowerCase()] ?? ""
@@ -65,8 +69,9 @@ function stripMarks(label: string): string {
 
 function summarizeEncounter(
   session: RaidSession,
-  encounter: EncounterDef
+  baseEncounter: EncounterDef
 ): string {
+  const encounter = resolveEncounter(baseEncounter, session.roster)
   const assignments = session.encounters[encounter.id]
   if (!assignments) return `No assignments yet for ${encounter.name}.`
 

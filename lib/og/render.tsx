@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og"
 import { CLASS_COLORS } from "@/lib/wow"
 import { ALL_ENCOUNTERS } from "@/lib/encounters"
+import { resolveEncounter } from "@/lib/encounters/resolver"
 import type {
   AssignmentMap,
   EncounterDef,
@@ -199,18 +200,23 @@ type MarkKind =
   | "cross"
   | "skull"
 
+// Ability icon tokens like "{ability:innervate}" appear in slot labels but we
+// don't render the icons in OG images — just strip them.
+const ABILITY_REGEX = /\{ability:[^}]+\}\s*/gi
+
 function renderLabel(raw: string): React.ReactNode {
+  const cleaned = raw.replace(ABILITY_REGEX, "")
   const parts: React.ReactNode[] = []
   let last = 0
-  for (const match of raw.matchAll(MARK_REGEX)) {
+  for (const match of cleaned.matchAll(MARK_REGEX)) {
     const start = match.index ?? 0
-    if (start > last) parts.push(raw.slice(last, start))
+    if (start > last) parts.push(cleaned.slice(last, start))
     parts.push(
       <Mark key={start} kind={match[1].toLowerCase() as MarkKind} />
     )
     last = start + match[0].length
   }
-  if (last < raw.length) parts.push(raw.slice(last))
+  if (last < cleaned.length) parts.push(cleaned.slice(last))
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
       {parts}
@@ -405,8 +411,11 @@ export function renderOgImage({
   session: RaidSession
   encounterId?: string
 }): ImageResponse {
-  const encounter = encounterId
+  const baseEncounter = encounterId
     ? ALL_ENCOUNTERS.find((e) => e.id === encounterId)
+    : undefined
+  const encounter = baseEncounter
+    ? resolveEncounter(baseEncounter, session.roster)
     : undefined
 
   const headlineLeft = encounter ? encounter.name : session.name || "Raid"
