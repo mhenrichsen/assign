@@ -22,7 +22,7 @@ export const maulgar: EncounterDef = {
     { id: "krosh-tank", label: "Mage Tank", group: "Krosh Firehand", accepts: ["Mage"], description: "Spellsteal Krosh's shield" },
     { id: "krosh-heal", label: "Healers", group: "Krosh Firehand", multi: true },
 
-    { id: "kiggler-tank", label: "Ranged Tank", group: "Kiggler the Crazed", accepts: ["Hunter", "Warlock"], description: "Ranged tank — usually a Hunter" },
+    { id: "kiggler-tank", label: "Ranged Tank", group: "Kiggler the Crazed", accepts: ["Hunter", "Warlock", "Druid"], description: "Ranged tank — Hunter, Warlock, or Boomkin" },
     { id: "kiggler-heal", label: "Healers", group: "Kiggler the Crazed", multi: true },
   ],
 }
