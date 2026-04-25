@@ -57,6 +57,20 @@ https://assign.example.com/r#eJyLzs...
 - 25-man raids with full assignments compress to ~500-1500 characters
 - `/r#...` is the editor, `/view#...` is read-only
 
+### Short URLs (optional)
+
+The Share dialog has a **Shorten** button that turns the long hash URL into something like `/r/abc123`. Short URLs are server-stored snapshots — once a viewer edits the session, the URL transitions back to a `/r/abc123#hash` form so edits live in the hash and survive reloads.
+
+Short links are stored in a single-file SQLite database. Configure with:
+
+- `LINKS_DB_PATH` — path to the SQLite file. Defaults to `./data/links.db`.
+
+**Coolify deployment:**
+
+1. Set env var `LINKS_DB_PATH=/app/data/links.db`.
+2. Mount a persistent volume at `/app/data` (the directory, not the file — WAL mode creates `links.db-wal` and `links.db-shm` siblings that all need to live on the volume).
+3. `better-sqlite3` is a native module. The default `node:20-bookworm-slim` style images work; Alpine needs extra build deps.
+
 ## Project Structure
 
 ```

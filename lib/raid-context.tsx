@@ -31,39 +31,44 @@ const EMPTY_SESSION: RaidSession = {
 export function RaidProvider({
   children,
   encounters,
+  initialPayload,
 }: {
   children: React.ReactNode
   encounters: EncounterDef[]
+  initialPayload?: string
 }) {
   const [hash, setHash] = useUrlHash()
   const [session, dispatch] = useReducer(raidReducer, EMPTY_SESSION)
   const initialized = useRef(false)
-  const skipNextSync = useRef(false)
+  // Stable JSON of the session that the URL already represents — gzip output
+  // varies by mtime header, so we compare structurally instead of by bytes.
+  const lastSyncedJson = useRef<string | null>(null)
 
-  // Initialize from URL hash on first valid hash
+  // Initialize from URL hash (preferred — survives user edits across reloads)
+  // or fall back to the server-provided snapshot for short-URL routes.
   useEffect(() => {
     if (initialized.current) return
-    if (!hash) return
+    const source = hash || initialPayload
+    if (!source) return
 
-    const decoded = decodeSession(hash)
+    const decoded = decodeSession(source)
     if (decoded) {
       dispatch({ type: "SET_SESSION", session: decoded })
       initialized.current = true
-      skipNextSync.current = true
+      lastSyncedJson.current = JSON.stringify(decoded)
     }
-  }, [hash])
+  }, [hash, initialPayload])
 
-  // Sync state back to URL hash (debounced)
+  // Sync state back to URL hash (debounced) — only when the session has
+  // actually changed compared to what the URL already represents.
   useEffect(() => {
     if (!initialized.current) return
-    if (skipNextSync.current) {
-      skipNextSync.current = false
-      return
-    }
 
     const timer = setTimeout(() => {
-      const encoded = encodeSession(session)
-      setHash(encoded)
+      const json = JSON.stringify(session)
+      if (json === lastSyncedJson.current) return
+      lastSyncedJson.current = json
+      setHash(encodeSession(session))
     }, 300)
 
     return () => clearTimeout(timer)
