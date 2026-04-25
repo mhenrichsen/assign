@@ -8,10 +8,20 @@ import { useInitialEncounters } from "@/hooks/use-initial-encounters"
 import Link from "next/link"
 import { Swords, Eye } from "lucide-react"
 
-function ViewContent({ encounters }: { encounters: EncounterDef[] }) {
+function ViewContent({
+  encounters,
+  initialEncounterId,
+}: {
+  encounters: EncounterDef[]
+  initialEncounterId?: string
+}) {
   const { session } = useRaid()
   const [activeEncounterId, setActiveEncounterId] = useState(
-    encounters[0]?.id ?? ""
+    () =>
+      (initialEncounterId &&
+        encounters.find((e) => e.id === initialEncounterId)?.id) ||
+      encounters[0]?.id ||
+      ""
   )
 
   const raidNames = [...new Set(encounters.map((e) => e.raidName))].join(" + ")
@@ -54,8 +64,10 @@ function ViewContent({ encounters }: { encounters: EncounterDef[] }) {
 
 export default function ViewClient({
   initialPayload,
+  initialEncounterId,
 }: {
   initialPayload?: string
+  initialEncounterId?: string
 }) {
   const encounters = useInitialEncounters(initialPayload)
 
@@ -69,7 +81,10 @@ export default function ViewClient({
 
   return (
     <RaidProvider encounters={encounters} initialPayload={initialPayload}>
-      <ViewContent encounters={encounters} />
+      <ViewContent
+        encounters={encounters}
+        initialEncounterId={initialEncounterId}
+      />
     </RaidProvider>
   )
 }

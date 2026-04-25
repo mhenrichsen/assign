@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Cinzel, Inter, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
@@ -19,10 +19,18 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Assign — WoW TBC Raid Assignments",
   description:
     "Drag-and-drop raid assignments for World of Warcraft: The Burning Crusade",
+}
+
+export const viewport: Viewport = {
+  themeColor: "#c9aa71",
 }
 
 export default function RootLayout({

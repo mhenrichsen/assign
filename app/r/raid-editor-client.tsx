@@ -19,10 +19,14 @@ import type { Player, AssignmentSlot } from "@/lib/types"
 import { useInitialEncounters } from "@/hooks/use-initial-encounters"
 import { useAutoPrefill } from "@/hooks/use-auto-prefill"
 
-function RaidEditor() {
+function RaidEditor({ initialEncounterId }: { initialEncounterId?: string }) {
   const { session, dispatch, encounters } = useRaid()
   const [activeEncounterId, setActiveEncounterId] = useState(
-    encounters[0]?.id ?? ""
+    () =>
+      (initialEncounterId &&
+        encounters.find((e) => e.id === initialEncounterId)?.id) ||
+      encounters[0]?.id ||
+      ""
   )
   const [activePlayer, setActivePlayer] = useState<Player | null>(null)
 
@@ -100,8 +104,10 @@ function RaidEditor() {
 
 export default function RaidEditorClient({
   initialPayload,
+  initialEncounterId,
 }: {
   initialPayload?: string
+  initialEncounterId?: string
 }) {
   const encounters = useInitialEncounters(initialPayload)
 
@@ -115,7 +121,7 @@ export default function RaidEditorClient({
 
   return (
     <RaidProvider encounters={encounters} initialPayload={initialPayload}>
-      <RaidEditor />
+      <RaidEditor initialEncounterId={initialEncounterId} />
     </RaidProvider>
   )
 }
