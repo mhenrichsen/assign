@@ -356,9 +356,9 @@ function EncounterOverview({
             style={{
               display: "flex",
               alignItems: "center",
-              fontSize: 14,
+              fontSize: 17,
               color: GOLD_DIM,
-              fontWeight: 500,
+              fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: 1,
             }}
@@ -367,7 +367,7 @@ function EncounterOverview({
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {line.players.map((p) => (
-              <PlayerChip key={p.id} player={p} size="sm" />
+              <PlayerChip key={p.id} player={p} />
             ))}
           </div>
         </div>
@@ -419,6 +419,8 @@ export function renderOgImage({
     (e) => e.id !== "general" && presentEncounterIds.includes(e.id)
   ).map((e) => e.name)
 
+  const subline = encounter ? null : subEncounters.join("  •  ")
+
   return new ImageResponse(
     (
       <div
@@ -429,7 +431,7 @@ export function renderOgImage({
           flexDirection: "column",
           background: BG,
           color: GOLD_LIGHT,
-          padding: 48,
+          padding: 32,
           fontFamily: "sans-serif",
         }}
       >
@@ -437,70 +439,34 @@ export function renderOgImage({
         <div
           style={{
             display: "flex",
-            height: 4,
+            height: 3,
             background: `linear-gradient(90deg, ${GOLD}, transparent)`,
-            marginBottom: 24,
+            marginBottom: 12,
           }}
         />
 
-        {/* Header */}
+        {/* Header — small, dense */}
         <div
           style={{
             display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            marginBottom: 24,
+            alignItems: "baseline",
+            gap: 12,
+            marginBottom: 14,
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <div
-              style={{
-                fontSize: 16,
-                color: GOLD,
-                fontWeight: 600,
-                letterSpacing: 4,
-                textTransform: "uppercase",
-              }}
-            >
-              Assign
-            </div>
-            <div
-              style={{
-                fontSize: 56,
-                color: GOLD_LIGHT,
-                fontWeight: 700,
-                lineHeight: 1.05,
-              }}
-            >
-              {headlineLeft}
-            </div>
-            {subEncounters.length > 0 && !encounter ? (
-              <div
-                style={{
-                  fontSize: 22,
-                  color: GOLD_DIM,
-                  marginTop: 6,
-                }}
-              >
-                {subEncounters.join("  •  ")}
-              </div>
-            ) : null}
-          </div>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "8px 16px",
-              borderRadius: 6,
-              background: PANEL,
-              border: `1px solid ${PANEL_BORDER}`,
-              fontSize: 22,
-              color: GOLD,
-              fontWeight: 600,
+              fontSize: 26,
+              color: GOLD_LIGHT,
+              fontWeight: 700,
+              lineHeight: 1,
             }}
           >
-            {headlineRight}
+            {headlineLeft}
           </div>
+          {subline ? (
+            <div style={{ fontSize: 14, color: GOLD_DIM }}>{subline}</div>
+          ) : null}
         </div>
 
         {/* Body */}
@@ -510,8 +476,8 @@ export function renderOgImage({
             flex: 1,
             background: PANEL,
             border: `1px solid ${PANEL_BORDER}`,
-            borderRadius: 12,
-            padding: 28,
+            borderRadius: 10,
+            padding: 22,
           }}
         >
           {encounter ? (
