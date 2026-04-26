@@ -7,7 +7,6 @@ import type { WowClass } from "@/lib/types"
 import { PlayerCard } from "./player-card"
 import { AddPlayerForm } from "./add-player-form"
 import { RosterImportDialog } from "./roster-import-dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { ClassIcon } from "@/components/class-icon"
 import { cn } from "@/lib/utils"
 import { Users } from "lucide-react"
@@ -104,8 +103,8 @@ export function RosterPanel({
         })}
       </div>
 
-      {/* Player list */}
-      <ScrollArea className="flex-1">
+      {/* Player list — native scroll for reliable touch momentum */}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         <div className="space-y-1 p-2">
           {sortedRoster.map((player) => (
             <PlayerCard
@@ -125,7 +124,7 @@ export function RosterPanel({
             </p>
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   )
 }

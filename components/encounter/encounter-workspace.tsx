@@ -18,8 +18,8 @@ export function EncounterWorkspace({
 }) {
   return (
     <div className="flex h-full flex-col">
-      {/* WoW-style tab bar */}
-      <div className="flex items-center gap-0 border-b border-[#3e3830] bg-[#16140f] px-2">
+      {/* WoW-style tab bar — horizontally scrollable on narrow screens */}
+      <div className="flex items-center gap-0 overflow-x-auto whitespace-nowrap border-b border-[#3e3830] bg-[#16140f] px-2 [scrollbar-width:thin]">
         {encounters.map((enc) => {
           const meta = BOSS_META[enc.id]
           const isActive = enc.id === activeEncounterId
@@ -28,7 +28,7 @@ export function EncounterWorkspace({
               key={enc.id}
               onClick={() => onEncounterChange(enc.id)}
               className={cn(
-                "relative flex items-center gap-2 px-4 py-2.5 text-base font-medium transition-all",
+                "relative flex shrink-0 items-center gap-2 px-4 py-2.5 text-base font-medium transition-all",
                 "font-[family-name:var(--font-heading)]",
                 isActive
                   ? "text-wow-gold-light wow-tab-active"
