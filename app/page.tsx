@@ -17,9 +17,28 @@ const INSTANCE_ICONS: Record<string, React.ReactNode> = {
   "magtheridons-lair": <Flame className="h-5 w-5" />,
 }
 
-function navigateToRaid(session: Omit<RaidSession, "createdAt">) {
+function navigateToRaidViaHash(session: Omit<RaidSession, "createdAt">) {
   const hash = encodeSession({ ...session, createdAt: Date.now() })
   window.location.href = `/r#${hash}`
+}
+
+async function navigateToShortRaid(
+  session: Omit<RaidSession, "createdAt">
+): Promise<void> {
+  const payload = encodeSession({ ...session, createdAt: Date.now() })
+  try {
+    const res = await fetch("/api/shorten", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ payload }),
+    })
+    if (!res.ok) throw new Error(`shorten failed (${res.status})`)
+    const { id } = (await res.json()) as { id: string }
+    window.location.href = `/r/${id}`
+  } catch {
+    // Fall back to the hash-only flow so the user can still get into the editor.
+    window.location.href = `/r#${payload}`
+  }
 }
 
 export default function HomePage() {
@@ -30,8 +49,10 @@ export default function HomePage() {
   const [rhError, setRhError] = useState<string | null>(null)
   const [rhLoading, setRhLoading] = useState(false)
 
+  const [creating, setCreating] = useState(false)
+
   function handleDemo() {
-    navigateToRaid({
+    navigateToRaidViaHash({
       id: nanoid(8),
       name: "Wednesday Gruul + Mag",
       roster: DEMO_ROSTER,
@@ -67,9 +88,10 @@ export default function HomePage() {
     }
   }
 
-  function handleCreate() {
+  async function handleCreate() {
     if (!name.trim()) return
     if (raidIds.length === 0) return
+    if (creating) return
 
     const encounters: RaidSession["encounters"] = {}
 
@@ -82,7 +104,8 @@ export default function HomePage() {
       }
     }
 
-    navigateToRaid({
+    setCreating(true)
+    await navigateToShortRaid({
       id: nanoid(8),
       name: name.trim(),
       roster: rhPlayers,
@@ -223,7 +246,7 @@ export default function HomePage() {
           {/* Create button */}
           <button
             onClick={handleCreate}
-            disabled={!name.trim() || raidIds.length === 0}
+            disabled={!name.trim() || raidIds.length === 0 || creating}
             className={cn(
               "w-full rounded-lg border px-4 py-3 text-base font-semibold transition-all",
               "font-[family-name:var(--font-heading)]",
@@ -233,7 +256,7 @@ export default function HomePage() {
             )}
           >
             <Swords className="inline h-4 w-4 mr-2 -mt-0.5" />
-            Create Raid
+            {creating ? "Creating…" : "Create Raid"}
           </button>
 
           {/* Divider */}

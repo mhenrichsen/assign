@@ -32,23 +32,25 @@ export function RaidProvider({
   children,
   encounters,
   initialPayload,
+  shortId,
 }: {
   children: React.ReactNode
   encounters: EncounterDef[]
   initialPayload?: string
+  shortId?: string
 }) {
   const [hash, setHash] = useUrlHash()
   const [session, dispatch] = useReducer(raidReducer, EMPTY_SESSION)
   const initialized = useRef(false)
-  // Stable JSON of the session that the URL already represents — gzip output
-  // varies by mtime header, so we compare structurally instead of by bytes.
+  // Stable JSON of the session that has been persisted — gzip output varies
+  // by mtime header, so we compare structurally instead of by bytes.
   const lastSyncedJson = useRef<string | null>(null)
 
-  // Initialize from URL hash (preferred — survives user edits across reloads)
-  // or fall back to the server-provided snapshot for short-URL routes.
+  // Initialize from the server-provided payload if present (canonical source
+  // for short-URL routes), otherwise fall back to the URL hash.
   useEffect(() => {
     if (initialized.current) return
-    const source = hash || initialPayload
+    const source = initialPayload || hash
     if (!source) return
 
     const decoded = decodeSession(source)
@@ -59,8 +61,8 @@ export function RaidProvider({
     }
   }, [hash, initialPayload])
 
-  // Sync state back to URL hash (debounced) — only when the session has
-  // actually changed compared to what the URL already represents.
+  // Sync state back to its canonical location (DB for short links, URL hash
+  // otherwise), debounced — only when the session has actually changed.
   useEffect(() => {
     if (!initialized.current) return
 
@@ -68,11 +70,23 @@ export function RaidProvider({
       const json = JSON.stringify(session)
       if (json === lastSyncedJson.current) return
       lastSyncedJson.current = json
-      setHash(encodeSession(session))
+      const payload = encodeSession(session)
+      if (shortId) {
+        fetch(`/api/shorten/${shortId}`, {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ payload }),
+        }).catch(() => {
+          // Network blip: drop the cached marker so the next change retries.
+          lastSyncedJson.current = null
+        })
+      } else {
+        setHash(payload)
+      }
     }, 300)
 
     return () => clearTimeout(timer)
-  }, [session, setHash])
+  }, [session, setHash, shortId])
 
   return (
     <RaidContext.Provider

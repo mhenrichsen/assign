@@ -41,6 +41,10 @@ export default async function ShortRaidBossPage({
   const payload = getLink(id)
   if (!payload) notFound()
   return (
-    <RaidEditorClient initialPayload={payload} initialEncounterId={boss} />
+    <RaidEditorClient
+      initialPayload={payload}
+      initialEncounterId={boss}
+      shortId={id}
+    />
   )
 }

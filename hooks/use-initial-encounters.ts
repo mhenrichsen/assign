@@ -12,7 +12,7 @@ export function useInitialEncounters(
   const [hash] = useUrlHash()
 
   return useMemo(() => {
-    const source = hash || initialPayload
+    const source = initialPayload || hash
     if (!source) return null
 
     const session = decodeSession(source)

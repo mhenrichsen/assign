@@ -31,6 +31,7 @@ const insertStmt = db.prepare(
   "INSERT INTO links (id, payload, created_at) VALUES (?, ?, ?)"
 )
 const selectStmt = db.prepare("SELECT payload FROM links WHERE id = ?")
+const updateStmt = db.prepare("UPDATE links SET payload = ? WHERE id = ?")
 
 const newId = customAlphabet("23456789abcdefghjkmnpqrstuvwxyz", 8)
 
@@ -51,4 +52,9 @@ export function createLink(payload: string): string {
 export function getLink(id: string): string | null {
   const row = selectStmt.get(id) as { payload: string } | undefined
   return row?.payload ?? null
+}
+
+export function updateLink(id: string, payload: string): boolean {
+  const result = updateStmt.run(payload, id)
+  return result.changes > 0
 }

@@ -29,5 +29,5 @@ export default async function ShortRaidPage({
   const { id } = await params
   const payload = getLink(id)
   if (!payload) notFound()
-  return <RaidEditorClient initialPayload={payload} />
+  return <RaidEditorClient initialPayload={payload} shortId={id} />
 }

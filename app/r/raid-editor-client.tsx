@@ -105,9 +105,11 @@ function RaidEditor({ initialEncounterId }: { initialEncounterId?: string }) {
 export default function RaidEditorClient({
   initialPayload,
   initialEncounterId,
+  shortId,
 }: {
   initialPayload?: string
   initialEncounterId?: string
+  shortId?: string
 }) {
   const encounters = useInitialEncounters(initialPayload)
 
@@ -120,7 +122,11 @@ export default function RaidEditorClient({
   }
 
   return (
-    <RaidProvider encounters={encounters} initialPayload={initialPayload}>
+    <RaidProvider
+      encounters={encounters}
+      initialPayload={initialPayload}
+      shortId={shortId}
+    >
       <RaidEditor initialEncounterId={initialEncounterId} />
     </RaidProvider>
   )

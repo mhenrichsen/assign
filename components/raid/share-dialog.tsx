@@ -46,22 +46,32 @@ export function ShareDialog({
 
   const scopeSuffix = scope === ALL ? "" : `/${scope}`
 
+  // Detect /r/<id>[/<boss>] paths so the dialog can surface the existing
+  // short link without requiring the user to click "Shorten".
+  const pathShortId =
+    typeof window !== "undefined"
+      ? window.location.pathname.match(/^\/r\/([a-z0-9]+)(?:\/[^/]+)?\/?$/i)?.[1]
+      : undefined
+
+  const activeShortId =
+    shorten.status === "ready" ? shorten.id : pathShortId
+
   function originPath(path: string) {
     if (typeof window === "undefined") return ""
     return `${window.location.origin}${path}`
   }
 
   function getEditUrl() {
-    if (shorten.status === "ready") {
-      return originPath(`/r/${shorten.id}${scopeSuffix}`)
+    if (activeShortId) {
+      return originPath(`/r/${activeShortId}${scopeSuffix}`)
     }
     if (typeof window === "undefined") return ""
     return window.location.href
   }
 
   function getViewUrl() {
-    if (shorten.status === "ready") {
-      return originPath(`/view/${shorten.id}${scopeSuffix}`)
+    if (activeShortId) {
+      return originPath(`/view/${activeShortId}${scopeSuffix}`)
     }
     if (typeof window === "undefined") return ""
     const url = new URL(window.location.href)
@@ -102,7 +112,7 @@ export function ShareDialog({
     }
   }
 
-  const isShort = shorten.status === "ready"
+  const isShort = activeShortId != null
   const isLoading = shorten.status === "loading"
 
   return (
