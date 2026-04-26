@@ -29,6 +29,7 @@ function RaidEditor({ initialEncounterId }: { initialEncounterId?: string }) {
       ""
   )
   const [activePlayer, setActivePlayer] = useState<Player | null>(null)
+  const [rosterOpen, setRosterOpen] = useState(false)
 
   useAutoPrefill(encounters, session, dispatch)
 
@@ -83,10 +84,17 @@ function RaidEditor({ initialEncounterId }: { initialEncounterId?: string }) {
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-svh flex-col">
-        <RaidHeader activeEncounterId={activeEncounterId} />
-        <div className="flex flex-1 overflow-hidden">
-          <RosterPanel activeEncounterId={activeEncounterId} />
-          <div className="flex-1 overflow-hidden">
+        <RaidHeader
+          activeEncounterId={activeEncounterId}
+          onToggleRoster={() => setRosterOpen((v) => !v)}
+        />
+        <div className="relative flex flex-1 overflow-hidden">
+          <RosterPanel
+            activeEncounterId={activeEncounterId}
+            isOpen={rosterOpen}
+            onClose={() => setRosterOpen(false)}
+          />
+          <div className="min-w-0 flex-1 overflow-hidden">
             <EncounterWorkspace
               encounters={encounters}
               activeEncounterId={activeEncounterId}

@@ -9,12 +9,16 @@ import { AddPlayerForm } from "./add-player-form"
 import { RosterImportDialog } from "./roster-import-dialog"
 import { ClassIcon } from "@/components/class-icon"
 import { cn } from "@/lib/utils"
-import { Users } from "lucide-react"
+import { Users, X } from "lucide-react"
 
 export function RosterPanel({
   activeEncounterId,
+  isOpen = false,
+  onClose,
 }: {
   activeEncounterId: string
+  isOpen?: boolean
+  onClose?: () => void
 }) {
   const { session, dispatch } = useRaid()
   const [classFilter, setClassFilter] = useState<WowClass | null>(null)
@@ -44,23 +48,52 @@ export function RosterPanel({
   })
 
   return (
-    <div className="flex h-full w-[280px] flex-col border-r border-[#3e3830] bg-[#16140f]">
-      {/* Header */}
-      <div className="border-b border-[#3e3830] p-3">
-        <div className="flex items-center gap-2 mb-2.5">
-          <Users className="h-4 w-4 text-wow-gold" />
-          <h2 className="text-base font-semibold text-wow-gold font-[family-name:var(--font-heading)]">
-            Roster
-          </h2>
-          <span className="text-xs text-[#7a6a4a]">
-            ({session.roster.length})
-          </span>
+    <>
+      {/* Backdrop — mobile only, when drawer is open */}
+      <div
+        onClick={onClose}
+        className={cn(
+          "fixed inset-0 z-20 bg-black/60 transition-opacity md:hidden",
+          isOpen
+            ? "opacity-100"
+            : "pointer-events-none opacity-0"
+        )}
+      />
+      <aside
+        className={cn(
+          "flex h-full w-[280px] flex-col border-r border-[#3e3830] bg-[#16140f]",
+          // Mobile: fixed overlay that slides in from the left
+          "fixed inset-y-0 left-0 z-30 transform shadow-xl shadow-black/50 transition-transform duration-200",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          // Desktop: in-flow sidebar, always visible
+          "md:relative md:z-auto md:translate-x-0 md:shadow-none md:transition-none"
+        )}
+      >
+        {/* Header */}
+        <div className="border-b border-[#3e3830] p-3">
+          <div className="mb-2.5 flex items-center gap-2">
+            <Users className="h-4 w-4 text-wow-gold" />
+            <h2 className="text-base font-semibold text-wow-gold font-[family-name:var(--font-heading)]">
+              Roster
+            </h2>
+            <span className="text-xs text-[#7a6a4a]">
+              ({session.roster.length})
+            </span>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="ml-auto rounded p-1 text-[#7a6a4a] hover:bg-[#262420] hover:text-wow-gold transition-colors md:hidden"
+                title="Close roster"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <AddPlayerForm />
+          <div className="mt-2">
+            <RosterImportDialog />
+          </div>
         </div>
-        <AddPlayerForm />
-        <div className="mt-2">
-          <RosterImportDialog />
-        </div>
-      </div>
 
       {/* Class filters */}
       <div className="flex flex-wrap gap-1 border-b border-[#3e3830] p-2">
@@ -125,6 +158,7 @@ export function RosterPanel({
           )}
         </div>
       </div>
-    </div>
+      </aside>
+    </>
   )
 }
