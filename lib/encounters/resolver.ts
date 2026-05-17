@@ -55,6 +55,45 @@ const ENCOUNTER_SPEC_PREFILLS: Record<string, Record<string, string[]>> = {
   magtheridon: {
     "Warrior:Protection": ["mag-mt"],
   },
+  hydross: {
+    "Warrior:Protection": ["hydross-frost-tank"],
+    "Paladin:Protection": ["hydross-nature-tank"],
+    "Druid:Feral": ["hydross-add-tank"],
+  },
+  lurker: {
+    "Warrior:Protection": ["lurker-mt"],
+    "Druid:Feral": ["lurker-add-tank-1"],
+  },
+  leotheras: {
+    "Warrior:Protection": ["leo-mt"],
+    "Paladin:Protection": ["leo-add-tank"],
+  },
+  karathress: {
+    "Warrior:Protection": ["kara-mt"],
+  },
+  morogrim: {
+    "Warrior:Protection": ["moro-mt"],
+    "Druid:Feral": ["moro-add-tank"],
+  },
+  vashj: {
+    "Warrior:Protection": ["vashj-mt"],
+  },
+  voidreaver: {
+    "Warrior:Protection": ["vr-mt"],
+    "Druid:Feral": ["vr-ot"],
+    "Paladin:Protection": ["vr-ot"],
+  },
+  alar: {
+    "Warrior:Protection": ["alar-p1-tank-1"],
+    "Paladin:Protection": ["alar-p1-tank-2"],
+    "Druid:Feral": ["alar-p1-add-tank"],
+  },
+  solarian: {
+    "Warrior:Protection": ["sol-mt"],
+  },
+  kaelthas: {
+    "Warrior:Protection": ["kt-mt"],
+  },
 }
 
 /**
