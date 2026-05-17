@@ -9,12 +9,14 @@ import { PlayerIcon } from "@/components/player-icon"
 import { CLASS_COLORS } from "@/lib/wow"
 import type { Player, RaidSession } from "@/lib/types"
 import { DEMO_ROSTER, DEMO_ASSIGNMENTS } from "@/lib/demo-roster"
-import { Swords, Shield, Flame, Play } from "lucide-react"
+import { Swords, Shield, Flame, Play, Waves, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const INSTANCE_ICONS: Record<string, React.ReactNode> = {
   "gruuls-lair": <Shield className="h-5 w-5" />,
   "magtheridons-lair": <Flame className="h-5 w-5" />,
+  "serpentshrine-cavern": <Waves className="h-5 w-5" />,
+  "tempest-keep": <Sparkles className="h-5 w-5" />,
 }
 
 function navigateToRaidViaHash(session: Omit<RaidSession, "createdAt">) {
@@ -161,7 +163,7 @@ export default function HomePage() {
             <label className="text-sm font-medium text-wow-gold">
               Instance
             </label>
-            <div className="flex gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {RAID_INSTANCES.map((inst) => {
                 const selected = raidIds.includes(inst.id)
                 return (
@@ -175,7 +177,7 @@ export default function HomePage() {
                       )
                     }
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium transition-all",
+                      "flex items-center justify-center gap-2 rounded-lg border px-3 py-3 text-sm font-medium transition-all",
                       "font-[family-name:var(--font-heading)]",
                       selected
                         ? "border-wow-gold/60 bg-wow-gold/10 text-wow-gold-light shadow-[0_0_12px_rgba(201,170,113,0.15)]"
