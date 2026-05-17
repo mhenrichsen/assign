@@ -11,7 +11,7 @@ export const lurker: EncounterDef = {
     // Tanks
     { id: "lurker-mt", label: "Main Tank", group: "Tanks", accepts: ["Warrior", "Druid", "Paladin"], description: "Tank Lurker — stays at melee, swims back after Spout" },
     { id: "lurker-add-tank-1", label: "Coilfang Guardian Tank", group: "Tanks", accepts: ["Warrior", "Druid", "Paladin"] },
-    { id: "lurker-add-tank-2", label: "Coilfang Ambusher Kiter", group: "Tanks", accepts: ["Hunter", "Warlock", "Mage"], description: "Kite the ranged Ambusher adds" },
+    { id: "lurker-add-tank-2", label: "Coilfang Ambusher CC", group: "Tanks", accepts: ["Hunter", "Warlock", "Mage"], description: "Trap / CC / kill the ranged Ambusher adds" },
 
     // Pull
     { id: "lurker-puller", label: "Fishing Pull", group: "Pull", accepts: ["Warrior", "Hunter", "Mage", "Warlock", "Priest", "Paladin", "Shaman", "Rogue", "Druid"], description: "Use fishing pole at the throne to start the fight" },

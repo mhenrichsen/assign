@@ -6,19 +6,17 @@ export const leotheras: EncounterDef = {
   raid: "serpentshrine-cavern",
   raidName: "Serpentshrine Cavern",
   description:
-    "Two-phase split — Night Elf phase has Whirlwind & Inner Demons, Demon phase needs warlock tank. Banish adds on pull.",
+    "Three Greyheart Spellbinders are killed pre-pull. Two-phase split — Night Elf phase has Whirlwind & Inner Demons (self-killed), Demon phase needs a warlock tank.",
   slots: [
     // Tanks
     { id: "leo-mt", label: "Night Elf Tank", group: "Tanks", accepts: ["Warrior", "Druid", "Paladin"], description: "Tank Leotheras during humanoid phase" },
     { id: "leo-demon-tank", label: "Demon Tank (Warlock)", group: "Tanks", accepts: ["Warlock"], description: "Warlock tanks Leotheras during demon phase" },
-    { id: "leo-add-tank", label: "Spellbinder Tank", group: "Tanks", accepts: ["Warrior", "Druid", "Paladin"], description: "Tank Greyheart Spellbinder adds on pull" },
 
-    // Banishes
-    { id: "leo-banish-1", label: "Banish 1", group: "Banish (pull)", accepts: ["Warlock"], description: "Banish a Spellbinder on pull" },
-    { id: "leo-banish-2", label: "Banish 2", group: "Banish (pull)", accepts: ["Warlock"], description: "Banish a Spellbinder on pull" },
-
-    // Inner Demons (one per affected player — handled dynamically by raid)
-    { id: "leo-demon-killers", label: "Inner Demon Killers", group: "Inner Demons", multi: true, description: "DPS that focus and kill Inner Demons on their assigned target" },
+    // Pre-pull Spellbinders (3 adds)
+    { id: "leo-spellbinder-tank-1", label: "Spellbinder Tank 1", group: "Pre-pull Spellbinders (kill first)", accepts: ["Warrior", "Druid", "Paladin"] },
+    { id: "leo-spellbinder-tank-2", label: "Spellbinder Tank 2", group: "Pre-pull Spellbinders (kill first)", accepts: ["Warrior", "Druid", "Paladin"] },
+    { id: "leo-spellbinder-tank-3", label: "Spellbinder Tank 3", group: "Pre-pull Spellbinders (kill first)", accepts: ["Warrior", "Druid", "Paladin"] },
+    { id: "leo-spellbinder-interrupt", label: "Mind Blast Interrupts", group: "Pre-pull Spellbinders (kill first)", multi: true, accepts: ["Warrior", "Rogue", "Shaman", "Mage"] },
 
     // Healers
     { id: "leo-mt-heal", label: "MT Healers", group: "Healers", multi: true },

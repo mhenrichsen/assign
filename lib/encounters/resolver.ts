@@ -58,7 +58,7 @@ const ENCOUNTER_SPEC_PREFILLS: Record<string, Record<string, string[]>> = {
   hydross: {
     "Warrior:Protection": ["hydross-frost-tank"],
     "Paladin:Protection": ["hydross-nature-tank"],
-    "Druid:Feral": ["hydross-add-tank"],
+    "Druid:Feral": ["hydross-pure-tank"],
   },
   lurker: {
     "Warrior:Protection": ["lurker-mt"],
@@ -66,27 +66,28 @@ const ENCOUNTER_SPEC_PREFILLS: Record<string, Record<string, string[]>> = {
   },
   leotheras: {
     "Warrior:Protection": ["leo-mt"],
-    "Paladin:Protection": ["leo-add-tank"],
+    "Paladin:Protection": ["leo-spellbinder-tank-1"],
   },
   karathress: {
     "Warrior:Protection": ["kara-mt"],
   },
   morogrim: {
     "Warrior:Protection": ["moro-mt"],
-    "Druid:Feral": ["moro-add-tank"],
+    "Druid:Feral": ["moro-add-tank-left"],
+    "Paladin:Protection": ["moro-add-tank-right"],
   },
   vashj: {
     "Warrior:Protection": ["vashj-mt"],
   },
   voidreaver: {
     "Warrior:Protection": ["vr-mt"],
-    "Druid:Feral": ["vr-ot"],
-    "Paladin:Protection": ["vr-ot"],
+    "Druid:Feral": ["vr-ot-1"],
+    "Paladin:Protection": ["vr-ot-2"],
   },
   alar: {
     "Warrior:Protection": ["alar-p1-tank-1"],
     "Paladin:Protection": ["alar-p1-tank-2"],
-    "Druid:Feral": ["alar-p1-add-tank"],
+    "Druid:Feral": ["alar-p2-tank-2"],
   },
   solarian: {
     "Warrior:Protection": ["sol-mt"],
